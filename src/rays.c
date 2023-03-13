@@ -1,53 +1,53 @@
 #include "rays.h"
 
-void getSegmentFromDiagonalWall(char blockType, vec2f *segA, vec2f *segB)
+void getSegmentFromDiagonalWall(char blockType, Vector2f *segA, Vector2f *segB)
 {
     if (blockType == 'A')
     {
-        *segA = (vec2f){.x = 0, .y = 0 + 1};
-        *segB = (vec2f){.x = 0 + 1, .y = 0};
+        *segA = (Vector2f){.x = 0, .y = 0 + 1};
+        *segB = (Vector2f){.x = 0 + 1, .y = 0};
     }
     else if (blockType == 'B')
     {
-        *segA = (vec2f){.x = 0, .y = 0};
-        *segB = (vec2f){.x = 0 + 1, .y = 0 + 1};
+        *segA = (Vector2f){.x = 0, .y = 0};
+        *segB = (Vector2f){.x = 0 + 1, .y = 0 + 1};
     }
     else if (blockType == 'C')
     {
-        *segA = (vec2f){.x = 0, .y = 0};
-        *segB = (vec2f){.x = 0 + 1, .y = 0 + 1};
+        *segA = (Vector2f){.x = 0, .y = 0};
+        *segB = (Vector2f){.x = 0 + 1, .y = 0 + 1};
     }
     else if (blockType == 'D')
     {
-        *segA = (vec2f){.x = 0, .y = 0 + 1};
-        *segB = (vec2f){.x = 0 + 1, .y = 0};
+        *segA = (Vector2f){.x = 0, .y = 0 + 1};
+        *segB = (Vector2f){.x = 0 + 1, .y = 0};
     }
 }
 
-bool didRayHitDiagonalWall(ray_t ray, char blockType)
+bool didRayHitDiagonalWall(Ray ray, char blockType)
 {
     if (blockType == 'A')
     {
         // check for ray direction, if correct set bBasicWallCollision true, else set segA and segB
-        if ((ray.blockSide == HORIZONTAL && ray.vRayDir.x < 0) || (ray.blockSide == VERTICAL && ray.vRayDir.y < 0))
+        if ((ray.blockSide == HORIZONTAL && ray.dir.x < 0) || (ray.blockSide == VERTICAL && ray.dir.y < 0))
             return true;
         return false;
     }
     else if (blockType == 'B')
     {
-        if ((ray.blockSide == HORIZONTAL && ray.vRayDir.x > 0) || (ray.blockSide == VERTICAL && ray.vRayDir.y < 0))
+        if ((ray.blockSide == HORIZONTAL && ray.dir.x > 0) || (ray.blockSide == VERTICAL && ray.dir.y < 0))
             return true;
         return false;
     }
     else if (blockType == 'C')
     {
-        if ((ray.blockSide == HORIZONTAL && ray.vRayDir.x < 0) || (ray.blockSide == VERTICAL && ray.vRayDir.y > 0))
+        if ((ray.blockSide == HORIZONTAL && ray.dir.x < 0) || (ray.blockSide == VERTICAL && ray.dir.y > 0))
             return true;
         return false;
     }
     else if (blockType == 'D')
     {
-        if ((ray.blockSide == HORIZONTAL && ray.vRayDir.x > 0) || (ray.blockSide == VERTICAL && ray.vRayDir.y > 0))
+        if ((ray.blockSide == HORIZONTAL && ray.dir.x > 0) || (ray.blockSide == VERTICAL && ray.dir.y > 0))
             return true;
         return false;
     }
@@ -55,27 +55,27 @@ bool didRayHitDiagonalWall(ray_t ray, char blockType)
     return true;
 }
 
-void cast_rays(player_t *player, ray_t *rays, map_t *map)
+void castRays(Player *player, Ray *rays, Map *map)
 {
     unsigned iRayCount = 0;
 
-    float fPlayerCameraDistance = vector_mag(player->dir);
-    float fPlayerCameraWidth = vector_mag(player->plane);
+    float fPlayerCameraDistance = Vector2f_mag(player->dir);
+    float fPlayerCameraWidth = Vector2f_mag(player->plane);
 
     for (int x = 0; x < SCREEN_WIDTH; x++)
     {
-        ray_t ray;
+        Ray ray;
         float cameraX = 2 * x / (float)SCREEN_WIDTH - 1 + (1.0f / (float)SCREEN_WIDTH) / 2.0f;
 
-        vec2f rayStart = player->pos;
-        vec2f rayDir;
+        Vector2f rayStart = player->pos;
+        Vector2f rayDir;
         rayDir.x = player->dir.x + player->plane.x * cameraX;
         rayDir.y = player->dir.y + player->plane.y * cameraX;
-        rayDir = vector_norm(rayDir);
-        vec2f rayUnitStepSize;
+        rayDir = Vector2f_norm(rayDir);
+        Vector2f rayUnitStepSize;
 
-        ray.vRayDir.x = rayDir.x;
-        ray.vRayDir.y = rayDir.y;
+        ray.dir.x = rayDir.x;
+        ray.dir.y = rayDir.y;
 
         // check for horizontal and vertical rays -> division by 0
         rayUnitStepSize.x = sqrt(1 + (rayDir.y / rayDir.x) * (rayDir.y / rayDir.x));
@@ -84,7 +84,7 @@ void cast_rays(player_t *player, ray_t *rays, map_t *map)
         int mapX = (int)floor(rayStart.x);
         int mapY = (int)floor(rayStart.y);
 
-        vec2f rayLength1D;
+        Vector2f rayLength1D;
 
         int stepX, stepY;
 
@@ -117,26 +117,26 @@ void cast_rays(player_t *player, ray_t *rays, map_t *map)
         ////////
         if (map->arr[mapY][mapX].blockType != '#' && map->arr[mapY][mapX].blockType != 'E')
         {
-            vec2f segA, segB;
+            Vector2f segA, segB;
             getSegmentFromDiagonalWall(map->arr[mapY][mapX].blockType, &segA, &segB);
             segA.x += mapX;
             segA.y += mapY;
             segB.x += mapX;
             segB.y += mapY;
 
-            vec2f inter;
+            Vector2f inter;
             if (raySegCollision(rayStart, rayDir, segA, segB, &inter))
             {
-                if (vector_dot(player->dir, vector_sub(inter, player->pos)) >= 0.f)
+                if (Vector2f_dot(player->dir, Vector2f_sub(inter, player->pos)) >= 0.f)
                 {
                     hit = true;
-                    ray.vHit = inter;
-                    ray.fDistance = vector_mag(vector_sub(rayStart, inter));
-                    ray.iTextureId = 0;
-                    ray.iBlockId = mapX + mapY * map->width;
+                    ray.hitPos = inter;
+                    ray.distance = Vector2f_mag(Vector2f_sub(rayStart, inter));
+                    ray.textureId = 0;
+                    ray.blockId = mapX + mapY * map->width;
                     float fAngle = atan2(fPlayerCameraWidth * cameraX, fPlayerCameraDistance);
-                    ray.fCorrectedDistance = cos(fAngle) * ray.fDistance;
-                    ray.diagonal = true;
+                    ray.correctedDistance = cos(fAngle) * ray.distance;
+                    ray.isDiagonal = true;
                     // ray.blockSide = HORIZONTAL;
                 }
             }
@@ -170,19 +170,19 @@ void cast_rays(player_t *player, ray_t *rays, map_t *map)
                 if (bBasicWallCollision)
                 {
                     hit = true;
-                    ray.vHit = vector_add(rayStart, vector_mult_scalar(rayDir, distance));
-                    ray.fDistance = distance;
-                    ray.iTextureId = 0;
-                    ray.iBlockId = mapX + mapY * map->width;
+                    ray.hitPos = Vector2f_add(rayStart, Vector2f_multScalar(rayDir, distance));
+                    ray.distance = distance;
+                    ray.textureId = 0;
+                    ray.blockId = mapX + mapY * map->width;
                     float fAngle = atan2(fPlayerCameraWidth * cameraX, fPlayerCameraDistance);
-                    ray.fCorrectedDistance = cos(fAngle) * distance;
-                    ray.diagonal = false;
+                    ray.correctedDistance = cos(fAngle) * distance;
+                    ray.isDiagonal = false;
                 }
                 else
                 { // check for collision with segment
-                    vec2f inter;
+                    Vector2f inter;
 
-                    vec2f segA, segB;
+                    Vector2f segA, segB;
 
                     getSegmentFromDiagonalWall(map->arr[mapY][mapX].blockType, &segA, &segB);
                     segA.x += mapX;
@@ -192,33 +192,33 @@ void cast_rays(player_t *player, ray_t *rays, map_t *map)
                     if (raySegCollision(rayStart, rayDir, segA, segB, &inter))
                     {
                         hit = true;
-                        ray.vHit = inter;
-                        ray.fDistance = vector_mag(vector_sub(rayStart, inter));
-                        ray.iTextureId = 0;
-                        ray.iBlockId = mapX + mapY * map->width;
+                        ray.hitPos = inter;
+                        ray.distance = Vector2f_mag(Vector2f_sub(rayStart, inter));
+                        ray.textureId = 0;
+                        ray.blockId = mapX + mapY * map->width;
                         float fAngle = atan2(fPlayerCameraWidth * cameraX, fPlayerCameraDistance);
-                        ray.fCorrectedDistance = cos(fAngle) * ray.fDistance;
-                        ray.diagonal = true;
+                        ray.correctedDistance = cos(fAngle) * ray.distance;
+                        ray.isDiagonal = true;
                         // ray.blockSide = HORIZONTAL;
                     }
                 }
             }
         }
 
-        ray.bHit = hit;
+        ray.isHit = hit;
         rays[iRayCount++] = ray;
     }
 }
 
-ray_t castSinleRay(vec2f rayStart, vec2f rayDir, map_t *map)
+Ray castOneRay(Vector2f rayStart, Vector2f rayDir, Map *map)
 {
-    ray_t ray;
+    Ray ray;
 
-    rayDir = vector_norm(rayDir);
-    vec2f rayUnitStepSize;
+    rayDir = Vector2f_norm(rayDir);
+    Vector2f rayUnitStepSize;
 
-    ray.vRayDir.x = rayDir.x;
-    ray.vRayDir.y = rayDir.y;
+    ray.dir.x = rayDir.x;
+    ray.dir.y = rayDir.y;
 
     // check for horizontal and vertical rays -> division by 0
     rayUnitStepSize.x = sqrt(1 + (rayDir.y / rayDir.x) * (rayDir.y / rayDir.x));
@@ -227,7 +227,7 @@ ray_t castSinleRay(vec2f rayStart, vec2f rayDir, map_t *map)
     int mapX = (int)floor(rayStart.x);
     int mapY = (int)floor(rayStart.y);
 
-    vec2f rayLength1D;
+    Vector2f rayLength1D;
 
     int stepX, stepY;
 
@@ -260,26 +260,26 @@ ray_t castSinleRay(vec2f rayStart, vec2f rayDir, map_t *map)
     ////////
     if (map->arr[mapY][mapX].blockType != '#' && map->arr[mapY][mapX].blockType != 'E')
     {
-        vec2f segA, segB;
+        Vector2f segA, segB;
         getSegmentFromDiagonalWall(map->arr[mapY][mapX].blockType, &segA, &segB);
         segA.x += mapX;
         segA.y += mapY;
         segB.x += mapX;
         segB.y += mapY;
 
-        vec2f inter;
+        Vector2f inter;
         if (raySegCollision(rayStart, rayDir, segA, segB, &inter))
         {
-            if (vector_dot(rayDir, vector_sub(inter, rayStart)) >= 0.f)
+            if (Vector2f_dot(rayDir, Vector2f_sub(inter, rayStart)) >= 0.f)
             {
                 hit = true;
-                ray.vHit = inter;
-                ray.fDistance = vector_mag(vector_sub(rayStart, inter));
-                ray.iTextureId = 0;
-                ray.iBlockId = mapX + mapY * map->width;
+                ray.hitPos = inter;
+                ray.distance = Vector2f_mag(Vector2f_sub(rayStart, inter));
+                ray.textureId = 0;
+                ray.blockId = mapX + mapY * map->width;
                 float fAngle = 0.0f;
-                ray.fCorrectedDistance = cos(fAngle) * ray.fDistance;
-                ray.diagonal = true;
+                ray.correctedDistance = cos(fAngle) * ray.distance;
+                ray.isDiagonal = true;
                 // ray.blockSide = HORIZONTAL;
             }
         }
@@ -313,19 +313,19 @@ ray_t castSinleRay(vec2f rayStart, vec2f rayDir, map_t *map)
             if (bBasicWallCollision)
             {
                 hit = true;
-                ray.vHit = vector_add(rayStart, vector_mult_scalar(rayDir, distance));
-                ray.fDistance = distance;
-                ray.iTextureId = 0;
-                ray.iBlockId = mapX + mapY * map->width;
+                ray.hitPos = Vector2f_add(rayStart, Vector2f_multScalar(rayDir, distance));
+                ray.distance = distance;
+                ray.textureId = 0;
+                ray.blockId = mapX + mapY * map->width;
                 float fAngle = 0.0f;
-                ray.fCorrectedDistance = cos(fAngle) * distance;
-                ray.diagonal = false;
+                ray.correctedDistance = cos(fAngle) * distance;
+                ray.isDiagonal = false;
             }
             else
             { // check for collision with segment
-                vec2f inter;
+                Vector2f inter;
 
-                vec2f segA, segB;
+                Vector2f segA, segB;
 
                 getSegmentFromDiagonalWall(map->arr[mapY][mapX].blockType, &segA, &segB);
                 segA.x += mapX;
@@ -335,26 +335,26 @@ ray_t castSinleRay(vec2f rayStart, vec2f rayDir, map_t *map)
                 if (raySegCollision(rayStart, rayDir, segA, segB, &inter))
                 {
                     hit = true;
-                    ray.vHit = inter;
-                    ray.fDistance = vector_mag(vector_sub(rayStart, inter));
-                    ray.iTextureId = 0;
-                    ray.iBlockId = mapX + mapY * map->width;
+                    ray.hitPos = inter;
+                    ray.distance = Vector2f_mag(Vector2f_sub(rayStart, inter));
+                    ray.textureId = 0;
+                    ray.blockId = mapX + mapY * map->width;
                     float fAngle = 0.0f;
-                    ray.fCorrectedDistance = cos(fAngle) * ray.fDistance;
-                    ray.diagonal = true;
+                    ray.correctedDistance = cos(fAngle) * ray.distance;
+                    ray.isDiagonal = true;
                     // ray.blockSide = HORIZONTAL;
                 }
             }
         }
     }
 
-    ray.bHit = hit;
+    ray.isHit = hit;
 
     return ray;
 }
 
 // returns 1 -> collision, 0 -> no collision, stores collision in inter
-int raySegCollision(vec2f rayStart, vec2f rayDir, vec2f segA, vec2f segB, vec2f *inter)
+int raySegCollision(Vector2f rayStart, Vector2f rayDir, Vector2f segA, Vector2f segB, Vector2f *inter)
 {
     float a1, a2, b1, b2;
 
@@ -398,7 +398,7 @@ int raySegCollision(vec2f rayStart, vec2f rayDir, vec2f segA, vec2f segB, vec2f 
     return 1;
 }
 
-float rayPointDistSquared(vec2f rayStart, vec2f rayDir, vec2f point)
+float rayPointDistSquared(Vector2f rayStart, Vector2f rayDir, Vector2f point)
 {
     float a, b;
     a = rayDir.y / rayDir.x;

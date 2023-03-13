@@ -24,7 +24,7 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-void draw_floor_and_ceiling(SDL_Surface *screenSurface, player_t *player, SDL_Surface *walls_surface, int startY, int endY)
+void drawFloorNCeiling(SDL_Surface *screenSurface, Player *player, SDL_Surface *walls_surface, int startY, int endY)
 {
     for (int y = startY; y < endY; y++)
     {
@@ -40,7 +40,7 @@ void draw_floor_and_ceiling(SDL_Surface *screenSurface, player_t *player, SDL_Su
         int p = bIsFloor ? (y - SCREEN_HEIGHT / 2) : (SCREEN_HEIGHT / 2 - y);
 
         // Vertical position of the camera.
-        float camZ = bIsFloor ? (0.5 * SCREEN_HEIGHT + player->fOffsetVertical) : (0.5 * SCREEN_HEIGHT - player->fOffsetVertical);
+        float camZ = bIsFloor ? (0.5 * SCREEN_HEIGHT + player->offsetVertical) : (0.5 * SCREEN_HEIGHT - player->offsetVertical);
 
         // Horizontal distance from the camera to the floor for the current row.
         // 0.5 is the z position exactly in the middle between floor and ceiling.
@@ -75,47 +75,47 @@ void draw_floor_and_ceiling(SDL_Surface *screenSurface, player_t *player, SDL_Su
 
             if (bIsFloor)
             {
-                Uint32 pixelFloor = get_pixel_fast(walls_surface, tx + (TEXTURE_SIZE + 1) * 1, ty);
+                Uint32 pixelFloor = getPixelFast(walls_surface, tx + (TEXTURE_SIZE + 1) * 1, ty);
                 SDL_GetRGBA(pixelFloor, walls_surface->format, &r, &g, &b, &a);
                 pixelFloor = SDL_MapRGBA(walls_surface->format, r * light, g * light, b * light, a);
-                set_pixel_fast(screenSurface, x, y, pixelFloor);
+                setPixelFast(screenSurface, x, y, pixelFloor);
             }
             else
             {
-                Uint32 pixelCeiling = get_pixel_fast(walls_surface, tx + (TEXTURE_SIZE + 1) * 2, ty);
+                Uint32 pixelCeiling = getPixelFast(walls_surface, tx + (TEXTURE_SIZE + 1) * 2, ty);
                 SDL_GetRGBA(pixelCeiling, walls_surface->format, &r, &g, &b, &a);
                 pixelCeiling = SDL_MapRGBA(walls_surface->format, r * light, g * light, b * light, a);
-                set_pixel_fast(screenSurface, x, y, pixelCeiling);
+                setPixelFast(screenSurface, x, y, pixelCeiling);
             }
         }
     }
 }
 
-void draw_walls(SDL_Surface *screenSurface, player_t *player, ray_t *rays, float *fZBuffer, SDL_Surface *walls_surface, int startX, int endX)
+void drawWalls(SDL_Surface *screenSurface, Player *player, Ray *rays, float *fZBuffer, SDL_Surface *walls_surface, int startX, int endX)
 {
-    float fPlayerCameraDistance = vector_mag(player->dir);
+    float fPlayerCameraDistance = Vector2f_mag(player->dir);
 
     for (int x = startX; x < endX; x++)
     {
-        if (rays[x].bHit)
+        if (rays[x].isHit)
         {
             float fHeadPositionCorrection = 0.0f;
-            fHeadPositionCorrection = player->fOffsetVertical / rays[x].fCorrectedDistance;
+            fHeadPositionCorrection = player->offsetVertical / rays[x].correctedDistance;
 
-            int iLineHeight = (int)floor(SCREEN_HEIGHT * fPlayerCameraDistance / rays[x].fCorrectedDistance);
+            int iLineHeight = (int)floor(SCREEN_HEIGHT * fPlayerCameraDistance / rays[x].correctedDistance);
             int iStartY = SCREEN_HEIGHT / 2 - iLineHeight / 2 + fHeadPositionCorrection;
             int iEndY = SCREEN_HEIGHT / 2 + iLineHeight / 2 + fHeadPositionCorrection;
-            float fWallX = (rays[x].blockSide == VERTICAL) ? rays[x].vHit.x : rays[x].vHit.y;
+            float fWallX = (rays[x].blockSide == VERTICAL) ? rays[x].hitPos.x : rays[x].hitPos.y;
             fWallX -= floor(fWallX);
 
-            const int texture_width = rays[x].diagonal ? ((int)(TEXTURE_SIZE * SQUARE_ROOT_OF_TWO)) : TEXTURE_SIZE;
+            const int texture_width = rays[x].isDiagonal ? ((int)(TEXTURE_SIZE * SQUARE_ROOT_OF_TWO)) : TEXTURE_SIZE;
 
             int tx = fWallX * texture_width; // texture width
-            if (rays[x].blockSide == HORIZONTAL && rays[x].vRayDir.x > 0)
+            if (rays[x].blockSide == HORIZONTAL && rays[x].dir.x > 0)
                 tx = texture_width - tx - 1; // texture width
-            if (rays[x].blockSide == VERTICAL && rays[x].vRayDir.y < 0)
+            if (rays[x].blockSide == VERTICAL && rays[x].dir.y < 0)
                 tx = texture_width - tx - 1;                // texture width
-            tx += (texture_width + 1) * rays[x].iTextureId; // offset to different texture
+            tx += (texture_width + 1) * rays[x].textureId; // offset to different texture
 
             if (iStartY < 0)
                 iStartY = 0;
@@ -124,9 +124,9 @@ void draw_walls(SDL_Surface *screenSurface, player_t *player, ray_t *rays, float
 
             float step = 1.0f * TEXTURE_SIZE / iLineHeight; // 64-> texture height
             double texPos = (iStartY - SCREEN_HEIGHT / 2 + iLineHeight / 2 - fHeadPositionCorrection) * step;
-            const int ty_offset = rays[x].diagonal ? TEXTURE_SIZE + 1 : 0;
+            const int ty_offset = rays[x].isDiagonal ? TEXTURE_SIZE + 1 : 0;
 
-            float light = (PLAYER_LIGHT) / (rays[x].fCorrectedDistance * rays[x].fCorrectedDistance);
+            float light = (PLAYER_LIGHT) / (rays[x].correctedDistance * rays[x].correctedDistance);
             if (light > 1.0f)
                 light = 1.0f;
             // if(light < 0.25f) light = 0.25f;
@@ -135,22 +135,22 @@ void draw_walls(SDL_Surface *screenSurface, player_t *player, ray_t *rays, float
             {
                 int ty = (int)texPos & (TEXTURE_SIZE - 1); // 64 -> texture height
                 texPos += step;
-                Uint32 pixel = get_pixel_fast(walls_surface, tx, ty + ty_offset);
+                Uint32 pixel = getPixelFast(walls_surface, tx, ty + ty_offset);
                 Uint8 r, g, b, a;
                 SDL_GetRGBA(pixel, walls_surface->format, &r, &g, &b, &a);
                 pixel = SDL_MapRGBA(walls_surface->format, r * light, g * light, b * light, a);
-                set_pixel_fast(screenSurface, x, y, pixel);
+                setPixelFast(screenSurface, x, y, pixel);
             }
 
-            fZBuffer[x] = rays[x].fDistance;
+            fZBuffer[x] = rays[x].distance;
         }
     }
 }
 
 
-void draw_sprites(SDL_Renderer *renderer, player_t *player, sprite_arr_t *sprites, float *fZBuffer, SDL_Texture *soldier_texture, scaling_info_t *scalingInfo)
+void drawSprites(SDL_Renderer *renderer, Player *player, SpriteArray *sprites, float *fZBuffer, SDL_Texture *soldier_texture, ScalingData *scalingInfo)
 {
-    qsort(sprites->arr, sprites->size, sizeof(sprite_t), sprite_dist_compare);
+    qsort(sprites->arr, sprites->size, sizeof(Sprite), Sprite_compareDistance);
 
     SDL_Rect SrcR;
     SDL_Rect DestR;
@@ -161,7 +161,7 @@ void draw_sprites(SDL_Renderer *renderer, player_t *player, sprite_arr_t *sprite
     for (int i = 0; i < sprites->size; i++)
     {
         // enemy_t *zombie = &enemies->enemies[i];
-        sprite_t *zombie = &(sprites->arr[i]);
+        Sprite *zombie = &(sprites->arr[i]);
         float spriteX = zombie->pos.x - player->pos.x;
         float spriteY = zombie->pos.y - player->pos.y;
 
@@ -179,7 +179,7 @@ void draw_sprites(SDL_Renderer *renderer, player_t *player, sprite_arr_t *sprite
 #define vMove 0
         int vMoveScreen = (int)(vMove / transformY);
 
-        vMoveScreen = (int)(vMove / transformY) + player->fOffsetVertical / transformY;
+        vMoveScreen = (int)(vMove / transformY) + player->offsetVertical / transformY;
 
         int spriteHeight = abs((int)(SCREEN_HEIGHT / (transformY))) / vDiv;
         int drawStartY = -spriteHeight / 2 + SCREEN_HEIGHT / 2 + vMoveScreen;
@@ -231,7 +231,7 @@ void draw_sprites(SDL_Renderer *renderer, player_t *player, sprite_arr_t *sprite
         int texXLeft = (int)(256 * (drawStartX - (-spriteWidth / 2 + spriteScreenX)) * texture_width / spriteWidth) / 256;
         int texXRight = (int)(256 * (drawEndX - (-spriteWidth / 2 + spriteScreenX)) * texture_width / spriteWidth) / 256;
 
-        float light = (PLAYER_LIGHT) / (zombie->fDistanceToPlayerSquared);
+        float light = (PLAYER_LIGHT) / (zombie->distanceToPlayerSquared);
         if (light > 1.0f)
             light = 1.0f;
 
@@ -250,9 +250,9 @@ void draw_sprites(SDL_Renderer *renderer, player_t *player, sprite_arr_t *sprite
 }
 
 
-int sprite_dist_compare(const void *a, const void *b)
+int Sprite_compareDistance(const void *a, const void *b)
 {
-    if (((sprite_t *)a)->fDistanceToPlayerSquared < ((sprite_t *)b)->fDistanceToPlayerSquared)
+    if (((Sprite *)a)->distanceToPlayerSquared < ((Sprite *)b)->distanceToPlayerSquared)
         return 1;
     return -1;
 }

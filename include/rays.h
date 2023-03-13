@@ -12,24 +12,24 @@ typedef enum BLOCK_SIDE
     HORIZONTAL
 } BLOCK_SIDE;
 
-typedef struct ray_t
+typedef struct Ray
 {
-    vec2f vHit;
-    vec2f vRayDir;
-    bool bHit;
-    float fDistance;
-    float fCorrectedDistance;
+    Vector2f hitPos;
+    Vector2f dir;
+    bool isHit;
+    float distance;
+    float correctedDistance;
     BLOCK_SIDE blockSide;
-    bool diagonal;
-    int iBlockId;
-    int iTextureId;
-} ray_t;
+    bool isDiagonal;
+    int blockId;
+    int textureId;
+} Ray;
 
-int raySegCollision(vec2f rayStart, vec2f rayDir, vec2f segA, vec2f segB, vec2f *inter);
-void cast_rays(player_t *player, ray_t *rays, map_t *map);
-float rayPointDistSquared(vec2f rayStart, vec2f rayDir, vec2f point);
-void getSegmentFromDiagonalWall(char blockType, vec2f *segA, vec2f *segB);
-bool didRayHitDiagonalWall(ray_t ray, char blockType);
-ray_t castSinleRay(vec2f rayStart, vec2f rayDir, map_t *map);
+int raySegCollision(Vector2f rayStart, Vector2f rayDir, Vector2f segA, Vector2f segB, Vector2f *inter);
+void castRays(Player *player, Ray *rays, Map *map);
+float rayPointDistSquared(Vector2f rayStart, Vector2f rayDir, Vector2f point);
+void getSegmentFromDiagonalWall(char blockType, Vector2f *segA, Vector2f *segB);
+bool didRayHitDiagonalWall(Ray ray, char blockType);
+Ray castOneRay(Vector2f rayStart, Vector2f rayDir, Map *map);
 
 #endif // RAYS_H

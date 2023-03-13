@@ -25,10 +25,10 @@
 #define THREAD_COUNT 4
 #define PLAYER_LIGHT 7.0f
 
-typedef enum state_t
+typedef enum State
 {
     GAME_STATE,
     MENU_STATE
-} state_t;
+} State;
 
 #endif

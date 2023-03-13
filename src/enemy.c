@@ -1,51 +1,51 @@
 #include "enemy.h"
 
-void init_enemy_arr(enemy_arr_t *ea, int s)
+void EnemyArray_init(EnemyArray *ea, int s)
 {
     ea->size = 0;
     ea->capacity = s;
-    ea->enemies = calloc(s, sizeof(enemy_t));
+    ea->enemies = calloc(s, sizeof(Enemy));
     if (ea->enemies == NULL)
         exit(1);
 }
 
-void free_enemy_arr(enemy_arr_t *ea)
+void EnemyArray_free(EnemyArray *ea)
 {
     free(ea->enemies);
 }
 
-void add_enemy(enemy_arr_t *ea, float x, float y)
+void EnemyArray_add(EnemyArray *ea, float x, float y)
 {
     if (ea->size == ea->capacity)
         return;
-    enemy_t e;
+    Enemy e;
     e.pos.x = x;
     e.pos.y = y;
     e.circle.p.x = 4.5f;
     e.circle.p.y = 4.5f;
     e.circle.r = ENEMY_WIDTH * 0.5f;
     e.width = ENEMY_WIDTH;
-    e.fAttackCounter = 0.0f;
-    e.fHitAnimCounter = 0.0f;
-    e.hitAnimPlaying = false;
+    e.attackTimeCounter = 0.0f;
+    e.hitAnimTimeCounter = 0.0f;
+    e.isHitAnimPlaying = false;
     ea->enemies[ea->size] = e;
     ea->size++;
 }
 
-sprite_t enemy_get_sprite(enemy_t *e)
+Sprite Enemy_getSprite(Enemy *e)
 {
-    sprite_t s;
+    Sprite s;
     s.pos = e->pos;
-    s.tx = e->hitAnimPlaying ? 32 + 1 : 0;
+    s.tx = e->isHitAnimPlaying ? 32 + 1 : 0;
     s.ty = 0;
     s.tw = 32;
     s.th = 32;
     return s;
 }
 
-void enemy_take_damage(enemy_t *e)
+void Enemy_takeDamage(Enemy *e)
 {
-    e->fAttackCounter = 0.0f;
-    e->fHitAnimCounter = 0.0f;
-    e->hitAnimPlaying = true;
+    e->attackTimeCounter = 0.0f;
+    e->hitAnimTimeCounter = 0.0f;
+    e->isHitAnimPlaying = true;
 }

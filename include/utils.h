@@ -5,19 +5,19 @@
 
 #define PI 3.142857
 
-typedef struct intInRange_t
+typedef struct IntInRange
 { // keeps value between min and max, no cycling
     int value, min, max;
-} intInRange_t;
+} IntInRange;
 
-long long current_timestamp();
-void set_pixel_fast(SDL_Surface *, int, int, Uint32);
-Uint32 get_pixel_fast(SDL_Surface *, int, int);
+long long currentTimestamp();
+void setPixelFast(SDL_Surface *, int, int, Uint32);
+Uint32 getPixelFast(SDL_Surface *, int, int);
 float distanceSquared(float x1, float y1, float x2, float y2);
 
-intInRange_t intInRange_create(int v, int min, int max);
-void intInRange_increment(intInRange_t *iir);
-void intInRange_decrement(intInRange_t *iir);
+IntInRange IntInRange_create(int v, int min, int max);
+void IntInRange_increment(IntInRange *iir);
+void IntInRange_decrement(IntInRange *iir);
 
 int clampInt(int v, int min, int max);
 

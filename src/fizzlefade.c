@@ -2,7 +2,7 @@
 #include "SDL2/SDL.h"
 #include "gameState.h"
 
-void fizzlefade(gameState_t* gameState, float delta){
+void fizzlefade(GameState* gameState, float delta){
     Uint32 color = SDL_MapRGBA(gameState->deathScreenSurface->format, 0, 0, 0, 255);
 
     unsigned pixels_fizzeled = 0;
@@ -21,12 +21,12 @@ void fizzlefade(gameState_t* gameState, float delta){
         
         if (x < SCREEN_WIDTH && y < SCREEN_HEIGHT)
         {
-            set_pixel_fast(gameState->deathScreenSurface, x, y, color);
+            setPixelFast(gameState->deathScreenSurface, x, y, color);
             pixels_fizzeled++;
         }
         if (gameState->rndval == 1)//all pixels painted
         {
-            gameState->deathAnimFinished = true;
+            gameState->isDeathAnimFinished = true;
             break;
         }
     }

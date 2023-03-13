@@ -5,27 +5,27 @@
 #include "cute_c2.h"
 #include "vec2f.h"
 
-typedef struct sprite_t
+typedef struct Sprite
 {
-    vec2f pos;
-    float fDistanceToPlayerSquared;
+    Vector2f pos;
+    float distanceToPlayerSquared;
     unsigned tx;
     unsigned ty;
     unsigned tw;
     unsigned th;
-} sprite_t;
+} Sprite;
 
-typedef struct sprite_arr_t
+typedef struct SpriteArray
 {
     int size;
     int capacity;
-    sprite_t *arr;
-} sprite_arr_t;
+    Sprite *arr;
+} SpriteArray;
 
-void sprite_arr_init(sprite_arr_t *a, int s);
+void SpriteArray_init(SpriteArray *a, int s);
 
-void sprite_arr_free(sprite_arr_t *a);
+void SpriteArray_free(SpriteArray *a);
 
-void sprite_arr_add(sprite_arr_t *a, sprite_t s);
+void SpriteArray_add(SpriteArray *a, Sprite s);
 
 #endif

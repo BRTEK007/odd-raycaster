@@ -11,31 +11,31 @@
 #include "sprite.h"
 #include <stdbool.h>
 
-typedef struct enemy_t
+typedef struct Enemy
 {
-    vec2f pos;
+    Vector2f pos;
     c2Circle circle;
-    float fAttackCounter;
-    float fHitAnimCounter;
-    bool hitAnimPlaying;
+    float attackTimeCounter;
+    float hitAnimTimeCounter;
+    bool isHitAnimPlaying;
     float width;
-} enemy_t;
+} Enemy;
 
-typedef struct enemy_arr_t
+typedef struct EnemyArray
 {
     int size;
     int capacity;
-    enemy_t *enemies;
-} enemy_arr_t;
+    Enemy *enemies;
+} EnemyArray;
 
-void init_enemy_arr(enemy_arr_t *ea, int s);
+void EnemyArray_init(EnemyArray *ea, int s);
 
-void free_enemy_arr(enemy_arr_t *ea);
+void EnemyArray_free(EnemyArray *ea);
 
-void add_enemy(enemy_arr_t *ea, float x, float y);
+void EnemyArray_add(EnemyArray *ea, float x, float y);
 
-void enemy_take_damage(enemy_t *e);
+void Enemy_takeDamage(Enemy *e);
 
-sprite_t enemy_get_sprite(enemy_t *e);
+Sprite Enemy_getSprite(Enemy *e);
 
 #endif

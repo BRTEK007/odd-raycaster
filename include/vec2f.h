@@ -1,23 +1,23 @@
 #ifndef VEC2F_H
 #define VEC2F_H
 
-typedef struct vec2f
+typedef struct Vector2f
 {
     float x, y;
-} vec2f;
+} Vector2f;
 
-vec2f vector_add(vec2f, vec2f);
+Vector2f Vector2f_add(Vector2f, Vector2f);
 
-vec2f vector_sub(vec2f, vec2f);
+Vector2f Vector2f_sub(Vector2f, Vector2f);
 
-vec2f vector_mult_scalar(vec2f, float);
+Vector2f Vector2f_multScalar(Vector2f, float);
 
-float vector_mag(vec2f);
+float Vector2f_mag(Vector2f);
 
-vec2f vector_norm(vec2f);
+Vector2f Vector2f_norm(Vector2f);
 
-vec2f vector_right(vec2f);
+Vector2f Vector2f_right(Vector2f);
 
-float vector_dot(vec2f a, vec2f b);
+float Vector2f_dot(Vector2f a, Vector2f b);
 
 #endif // VEC2F_H

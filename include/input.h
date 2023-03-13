@@ -6,25 +6,25 @@
 
 #define KEY_COUNT 353
 
-typedef struct key_data_t
+typedef struct KeyData
 {
-    bool isPressed, justPressed;
-} key_data_t;
+    bool isPressed, isJustPressed;
+} KeyData;
 
-typedef struct keys_t
+typedef struct KeysArray
 {
-    bool anyKeyPressed;
-    key_data_t keys[KEY_COUNT];
-} keys_t;
+    bool isAnyKeyPressed;
+    KeyData keys[KEY_COUNT];
+} KeysArray;
 
-key_data_t get_key(keys_t *keyboard, size_t keyCode);
+KeyData getKeyData(KeysArray *keyboard, size_t keyCode);
 
-size_t get_key_id(size_t keyCode);
+size_t getKeyId(size_t keyCode);
 
-void update_keys(keys_t *keys);
+void KeysArray_update(KeysArray *keys);
 
-void read_keyboard(SDL_Event *, keys_t *);
+void read_keyboard(SDL_Event *, KeysArray *);
 
-void init_keys(keys_t *keys);
+void KeysArray_init(KeysArray *keys);
 
 #endif

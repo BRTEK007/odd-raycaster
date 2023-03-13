@@ -31,3 +31,15 @@ https://github.com/RandyGaul/cute_headers/blob/master/cute_c2.h
 ### dependencies
 SDL2  
 SDL2-ttf
+
+#### naming conventions
+|subject|convention|example|
+|--|--|--|
+struct name | PascalCase | ```ScalingData```
+struct member | camelCase | ```frameTexture```
+struct functions | STRUCTNAME_camelCase | ```GameState_updateEnemies``` 
+functions | camelCase | ```setPolyVerts``` 
+bool function or variable | starts with "is" | ```isFinished``` 
+word "with" | replace with letter "x" | ```resCollPlayerXMap``` 
+word "and" | replace with letter "n" | ```drawFloorNCeiling``` 
+file names | camelCase | ```drawRaycast.c``` 

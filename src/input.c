@@ -1,44 +1,44 @@
 #include "input.h"
 
-void init_keys(keys_t *keys)
+void KeysArray_init(KeysArray *keys)
 {
-    keys->anyKeyPressed = false;
+    keys->isAnyKeyPressed = false;
     for (int i = 0; i < KEY_COUNT; i++)
     {
         keys->keys[i].isPressed = false;
-        keys->keys[i].justPressed = false;
+        keys->keys[i].isJustPressed = false;
     }
 }
 
-void update_keys(keys_t *keys)
+void KeysArray_update(KeysArray *keys)
 {
-    keys->anyKeyPressed = false;
+    keys->isAnyKeyPressed = false;
     for (int i = 0; i < KEY_COUNT; i++)
     {
-        keys->keys[i].justPressed = false;
+        keys->keys[i].isJustPressed = false;
     }
 }
 
-void read_keyboard(SDL_Event *event, keys_t *keyboard)
+void read_keyboard(SDL_Event *event, KeysArray *keyboard)
 {
     if (event->type == SDL_KEYDOWN)
     {
-        keyboard->anyKeyPressed = true;
+        keyboard->isAnyKeyPressed = true;
 
-        size_t key_id = get_key_id(event->key.keysym.sym);
+        size_t key_id = getKeyId(event->key.keysym.sym);
         if (keyboard->keys[key_id].isPressed == false)
-            keyboard->keys[key_id].justPressed = true;
+            keyboard->keys[key_id].isJustPressed = true;
         keyboard->keys[key_id].isPressed = true;
     }
     else if (event->type == SDL_KEYUP)
     {
 
-        size_t key_id = get_key_id(event->key.keysym.sym);
+        size_t key_id = getKeyId(event->key.keysym.sym);
         keyboard->keys[key_id].isPressed = false;
     }
 }
 
-size_t get_key_id(size_t keyCode)
+size_t getKeyId(size_t keyCode)
 {
     if (keyCode > 127)
     {
@@ -48,7 +48,7 @@ size_t get_key_id(size_t keyCode)
     return keyCode;
 }
 
-key_data_t get_key(keys_t *keyboard, size_t keyCode)
+KeyData getKeyData(KeysArray *keyboard, size_t keyCode)
 {
-    return keyboard->keys[get_key_id(keyCode)];
+    return keyboard->keys[getKeyId(keyCode)];
 }

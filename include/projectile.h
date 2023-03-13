@@ -6,29 +6,29 @@
 #include "cute_c2.h"
 #include "sprite.h"
 
-typedef struct projectile_t
+typedef struct Projectile
 {
-    vec2f pos;
+    Vector2f pos;
     c2Circle circle;
-    vec2f vDir;
-    float fLifetime;
-} projectile_t;
+    Vector2f dir;
+    float lifetime;
+} Projectile;
 
-typedef struct projectile_arr_t
+typedef struct ProjectileArray
 {
     int size;
     int capacity;
-    projectile_t *arr;
-} projectile_arr_t;
+    Projectile *arr;
+} ProjectileArray;
 
-void init_procetile_arr(projectile_arr_t *arr, int s);
+void ProjectileArray_init(ProjectileArray *arr, int s);
 
-void free_procetile_arr(projectile_arr_t *arr);
+void ProjectileArray_free(ProjectileArray *arr);
 
-void add_procetile(projectile_arr_t *arr, projectile_t p);
+void ProjectileArray_add(ProjectileArray *arr, Projectile p);
 
-void projectile_arr_remove(projectile_arr_t *arr, int index);
+void ProjectileArray_remove(ProjectileArray *arr, int index);
 
-sprite_t projectile_get_sprite(projectile_t *e);
+Sprite Projectile_getSprite(Projectile *e);
 
 #endif

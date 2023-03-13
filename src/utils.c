@@ -1,6 +1,6 @@
 #include "utils.h"
 
-long long current_timestamp()
+long long currentTimestamp()
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);                                         
@@ -8,13 +8,13 @@ long long current_timestamp()
     return ms;
 }
 
-void set_pixel_fast(SDL_Surface *surface, int x, int y, Uint32 pixel)
+void setPixelFast(SDL_Surface *surface, int x, int y, Uint32 pixel)
 {
     Uint32 *const target_pixel = (Uint32 *)((Uint8 *)surface->pixels + y * surface->pitch + x * surface->format->BytesPerPixel);
     *target_pixel = pixel;
 }
 
-Uint32 get_pixel_fast(SDL_Surface *surface, int x, int y)
+Uint32 getPixelFast(SDL_Surface *surface, int x, int y)
 {
     Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * surface->format->BytesPerPixel;
     return *(Uint32 *)p;
@@ -25,22 +25,22 @@ float distanceSquared(float x1, float y1, float x2, float y2)
     return ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
 
-intInRange_t intInRange_create(int v, int min, int max)
+IntInRange IntInRange_create(int v, int min, int max)
 {
-    intInRange_t iir;
+    IntInRange iir;
     iir.value = v;
     iir.min = min;
     iir.max = max;
     return iir;
 }
-void intInRange_increment(intInRange_t *iir)
+void IntInRange_increment(IntInRange *iir)
 {
     iir->value++;
     if (iir->value > iir->max)
         iir->value = iir->max;
 }
 
-void intInRange_decrement(intInRange_t *iir)
+void IntInRange_decrement(IntInRange *iir)
 {
     iir->value--;
     if (iir->value < iir->min)
