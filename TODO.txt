@@ -1,0 +1,26 @@
+mirrors -> rays bounce of them
+transparent walls -> rays go through them
+portals -> rays go to other room
+destructible walls
+moving doors
+wall shooting projectiles
+trim enemy textures, donst waste space on sides
+map from files, bytes or txt ?
+BUG: sprites doesnt draw far right stripe
+better system for sprites
+sprites carry texture info
+player enemy collision
+medkits
+threaded rays casting
+wall decays after shot, (wall holes after bullets)
+vignete effect
+better enemy AI
+player shooting projectiles
+enemy death anim, fizzlefade ?
+map open
+pause menu and main menu text displaying optimize and refactor ?
+consistent naming
+procedural level generation from 16x16 rooms
+context steering
+add testing scenarios, load player position, health, enemies and write what to lookout for
+BUG: cant see more than 1 enemy
