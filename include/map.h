@@ -3,18 +3,18 @@
 
 #include <stdlib.h>
 
-typedef struct map_element_t{
+typedef struct MapCell{
     char blockType;
     char textures[4];
-} map_element_t;
+} MapCell;
 
-typedef struct map_t{
+typedef struct Map{
     int width;
     int height;
-    map_element_t** arr;
-} map_t;
+    MapCell** arr;
+} Map;
 
-void init_map(map_t* map);
-void free_map(map_t* map);
+void Map_init(Map* map);
+void Map_free(Map* map);
 
 #endif

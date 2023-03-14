@@ -15,28 +15,28 @@
 #define WEAPON_KNIFE 2
 #define KNIFE_REACH 1
 
-typedef struct player_t
+typedef struct Player
 {
-    vec2f pos;
-    vec2f dir;
-    vec2f plane;
-    int iGunFrame;
-    bool bIsShooting;
-    float fGunAnimTimeCounter;
+    Vector2f pos;
+    Vector2f dir;
+    Vector2f plane;
+    int gunFrame;
+    bool isShooting;
+    float gunAnimTimeCounter;
     c2Circle circle;
-    float fOffsetVertical;
-    float fVerticalAngle;
-    bool bJustAttacked;
+    float offsetVertical;
+    float verticalAngle;
+    bool isJustAttacked;
     int health;
     bool isDead;
-    float fHitAnimOpacity;
+    float hitAnimOpacity;
     int selectedWeapon;
-} player_t;
+} Player;
 
-void update_player(player_t *player, keys_t *keys, float delta);
+void Player_update(Player *player, KeysArray *keys, float delta);
 
-void init_player(player_t *player);
+void Player_init(Player *player);
 
-void player_take_hit(player_t *player);
+void Player_takeHit(Player *player);
 
 #endif // PLAYER_H

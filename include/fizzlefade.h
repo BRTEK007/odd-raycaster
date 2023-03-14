@@ -2,6 +2,6 @@
 #define FIZZLEFADE_H
 #include "gameState.h"
 
-void fizzlefade(gameState_t* gameState, float delta);
+void fizzlefade(GameState* gameState, float delta);
 
 #endif

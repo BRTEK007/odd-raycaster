@@ -1,21 +1,21 @@
 #include "draw.h"
 #include "drawRaycast.h"
 
-void *draw_floor_threaded(void *vargp)
+void *drawFloor_threaded(void *vargp)
 {
-    draw_floor_data_t *data = (draw_floor_data_t *)vargp;
-    draw_floor_and_ceiling(data->screenSurface, data->player, data->walls_surface, data->startY, data->endY);
+    DrawFloorThreadData *data = (DrawFloorThreadData *)vargp;
+    drawFloorNCeiling(data->screenSurface, data->player, data->wallsSurface, data->startY, data->endY);
     return NULL;
 }
 
-void *draw_walls_threaded(void *vargp)
+void *drawWalls_threaded(void *vargp)
 {
-    draw_walls_data_t *data = (draw_walls_data_t *)vargp;
-    draw_walls(data->screenSurface, data->player, data->rays, data->zBuffer, data->walls_surface, data->startX, data->endX);
+    DrawWallsThreadData *data = (DrawWallsThreadData *)vargp;
+    drawWalls(data->screenSurface, data->player, data->rays, data->zBuffer, data->wallsSurface, data->startX, data->endX);
     return NULL;
 }
 
-void draw_bar(SDL_Renderer *renderer, player_t *player, SDL_Texture *bar_texture, scaling_info_t *scalingInfo)
+void drawBar(SDL_Renderer *renderer, Player *player, SDL_Texture *bar_texture, ScalingData *scalingInfo)
 {
     SDL_Rect SrcR;
     SDL_Rect DestR;
@@ -59,7 +59,7 @@ void draw_bar(SDL_Renderer *renderer, player_t *player, SDL_Texture *bar_texture
     SDL_RenderCopy(renderer, bar_texture, &SrcR, &DestR);
 }
 
-void draw_text(SDL_Renderer *renderer, SDL_Texture *texture, int sx, int sy, char *text)
+void drawText(SDL_Renderer *renderer, SDL_Texture *texture, int sx, int sy, char *text)
 {
     SDL_Rect SrcR;
     SDL_Rect DestR;
@@ -80,7 +80,7 @@ void draw_text(SDL_Renderer *renderer, SDL_Texture *texture, int sx, int sy, cha
 }
 
 
-void draw_map(SDL_Renderer *renderer, player_t *player, enemy_arr_t *enemies, ray_t *rays, int iRayCount, map_t *map)
+void drawMap(SDL_Renderer *renderer, Player *player, EnemyArray *enemies, Ray *rays, int iRayCount, Map *map)
 {
     /* const int BLOCK_SIZE = 6;
      const int FRAME_SIZE = 1;
@@ -224,12 +224,12 @@ void draw_map(SDL_Renderer *renderer, player_t *player, enemy_arr_t *enemies, ra
 }
 
 
-void draw_weapon(SDL_Renderer *renderer, player_t *player, SDL_Texture *gun_texture, scaling_info_t *scalingInfo)
+void drawWeapon(SDL_Renderer *renderer, Player *player, SDL_Texture *gun_texture, ScalingData *scalingInfo)
 {
     SDL_Rect SrcR;
     SDL_Rect DestR;
 
-    SrcR.x = player->iGunFrame * 64 + player->iGunFrame;
+    SrcR.x = player->gunFrame * 64 + player->gunFrame;
     SrcR.y = player->selectedWeapon * (64 + 1);
     SrcR.w = 64;
     SrcR.h = 64;
@@ -240,11 +240,11 @@ void draw_weapon(SDL_Renderer *renderer, player_t *player, SDL_Texture *gun_text
     SDL_RenderCopy(renderer, gun_texture, &SrcR, &DestR);
 }
 
-scaling_info_t get_scaling_info(SDL_Renderer *renderer)
+ScalingData ScalingData_create(SDL_Renderer *renderer)
 {
     int rendererWidth, rendererHeight;
     SDL_GetRendererOutputSize(renderer, &rendererWidth, &rendererHeight);
-    scaling_info_t scalingInfo;
+    ScalingData scalingInfo;
     float scalingFactorX = (float)rendererWidth / (FRAME_WIDTH);
     float scalingFactorY = (float)rendererHeight / (FRAME_HEIGHT);
     scalingInfo.scalingFactor = scalingFactorX < scalingFactorY ? (int)floor(scalingFactorX) : (int)floor(scalingFactorY);
@@ -255,12 +255,12 @@ scaling_info_t get_scaling_info(SDL_Renderer *renderer)
     return scalingInfo;
 }
 
-void text_texture_free(text_texture_t *tt)
+void TextureXAspectRation_free(TextureXAspectRatio *tt)
 {
     SDL_DestroyTexture(tt->texture);
 }
 
-void draw_paused_bar(SDL_Renderer *renderer, TTF_Font *font, scaling_info_t *scalingInfo, int selectedOption)
+void drawPausedBar(SDL_Renderer *renderer, TTF_Font *font, ScalingData *scalingInfo, int selectedOption)
 {
     SDL_Rect rect;
     // draw bottom background
@@ -271,11 +271,11 @@ void draw_paused_bar(SDL_Renderer *renderer, TTF_Font *font, scaling_info_t *sca
     SDL_SetRenderDrawColor(renderer, 0, 25, 64, 255);
     SDL_RenderFillRect(renderer, &rect);
     // draw bottom text
-    text_texture_t textPaused = create_text_texture(renderer, font, "--PAUSED--", (SDL_Color){255, 225, 191});
+    TextureXAspectRatio textPaused = TextureXAspectRation_create(renderer, font, "--PAUSED--", (SDL_Color){255, 225, 191});
     rect.w = textPaused.aspectRatio * rect.h;
     rect.x = scalingInfo->offsetX + BAR_SCREEN_OFFSET_X * scalingInfo->scalingFactor + BAR_SCREEN_WIDTH * scalingInfo->scalingFactor / 2 - rect.w / 2;
     SDL_RenderCopy(renderer, textPaused.texture, NULL, &rect);
-    text_texture_free(&textPaused);
+    TextureXAspectRation_free(&textPaused);
 
     // draw top background
     rect.x = scalingInfo->offsetX + GAME_SCREEN_OFFSET_X * scalingInfo->scalingFactor;
@@ -296,7 +296,7 @@ void draw_paused_bar(SDL_Renderer *renderer, TTF_Font *font, scaling_info_t *sca
     {
         const char *text = i == selectedOption ? optionsSelected[i] : options[i];
 
-        text_texture_t textTexture = create_text_texture(renderer, font, text, (SDL_Color){255, 225, 191});
+        TextureXAspectRatio textTexture = TextureXAspectRation_create(renderer, font, text, (SDL_Color){255, 225, 191});
 
         int textWidth = textHeight * textTexture.aspectRatio;
 
@@ -306,15 +306,15 @@ void draw_paused_bar(SDL_Renderer *renderer, TTF_Font *font, scaling_info_t *sca
         rect.h = textHeight;
 
         SDL_RenderCopy(renderer, textTexture.texture, NULL, &rect);
-        text_texture_free(&textTexture);
+        TextureXAspectRation_free(&textTexture);
     }
 #undef OPTIONS_COUNT
 #undef TEXT_MARGIN_RATIO
 }
 
-text_texture_t create_text_texture(SDL_Renderer *renderer, TTF_Font *font, const char *text, SDL_Color color)
+TextureXAspectRatio TextureXAspectRation_create(SDL_Renderer *renderer, TTF_Font *font, const char *text, SDL_Color color)
 {
-    text_texture_t tt;
+    TextureXAspectRatio tt;
     SDL_Surface *surf = TTF_RenderText_Solid(font, text, color);
     tt.texture = SDL_CreateTextureFromSurface(renderer, surf);
     tt.aspectRatio = surf->w / surf->h;

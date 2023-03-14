@@ -2,18 +2,18 @@
 // #include <SDL2/SDL_ttf.h>
 #include "draw.h"
 
-void menuState_init(menuState_t *menuState, SDL_Renderer *renderer, TTF_Font *font)
+void MenuState_init(MenuState *menuState, SDL_Renderer *renderer, TTF_Font *font)
 {
 
     menuState->font = font;
     menuState->quit = false;
-    menuState->selectedOption = intInRange_create(0, 0, 2 - 1);
+    menuState->selectedOption = IntInRange_create(0, 0, 2 - 1);
 }
-void menuState_free(menuState_t *menuState)
+void MenuState_free(MenuState *menuState)
 {
 }
 
-void menuState_event(menuState_t *menuState, SDL_Event event)
+void MenuState_event(MenuState *menuState, SDL_Event event)
 {
 
     if (event.type == SDL_KEYDOWN)
@@ -25,26 +25,26 @@ void menuState_event(menuState_t *menuState, SDL_Event event)
             menuState->quit = true;
             break;
         case SDLK_UP:
-            intInRange_decrement(&(menuState->selectedOption));
+            IntInRange_decrement(&(menuState->selectedOption));
             break;
         case SDLK_DOWN:
-            intInRange_increment(&(menuState->selectedOption));
+            IntInRange_increment(&(menuState->selectedOption));
             break;
         }
     }
 }
-void menuState_update(menuState_t *menuState, float delta)
+void MenuState_update(MenuState *menuState, float delta)
 {
 }
 
-void menuState_draw(menuState_t *menuState, SDL_Renderer *renderer)
+void MenuState_draw(MenuState *menuState, SDL_Renderer *renderer)
 {
     SDL_SetRenderDrawColor(renderer, 64, 0, 25, 255);
     SDL_RenderClear(renderer);
 
-    scaling_info_t scalingInfo = get_scaling_info(renderer);
+    ScalingData scalingInfo = ScalingData_create(renderer);
 
-    text_texture_t titleText = create_text_texture(renderer, menuState->font, "RAYCASTER", (SDL_Color){191, 255, 225});
+    TextureXAspectRatio titleText = TextureXAspectRation_create(renderer, menuState->font, "RAYCASTER", (SDL_Color){191, 255, 225});
 
     int textHeight = scalingInfo.rendererHeight / 8;
     int textWidth = textHeight * titleText.aspectRatio;
@@ -58,7 +58,7 @@ void menuState_draw(menuState_t *menuState, SDL_Renderer *renderer)
     SDL_RenderCopy(renderer, titleText.texture, NULL, &rect);
 
     // Don't forget to free your surface and texture
-    text_texture_free(&titleText);
+    TextureXAspectRation_free(&titleText);
 
 #define OPTIONS_COUNT 2
 #define TEXT_MARGIN_RATIO 1.5
@@ -70,7 +70,7 @@ void menuState_draw(menuState_t *menuState, SDL_Renderer *renderer)
     {
         const char *text = i == menuState->selectedOption.value ? optionsSelected[i] : options[i];
 
-        text_texture_t textTexture = create_text_texture(renderer, menuState->font, text, (SDL_Color){128, 128, 128});
+        TextureXAspectRatio textTexture = TextureXAspectRation_create(renderer, menuState->font, text, (SDL_Color){128, 128, 128});
 
         textHeight = scalingInfo.rendererHeight / 18;
         textWidth = textHeight * textTexture.aspectRatio;
@@ -81,7 +81,7 @@ void menuState_draw(menuState_t *menuState, SDL_Renderer *renderer)
         rect.h = textHeight;
 
         SDL_RenderCopy(renderer, textTexture.texture, NULL, &rect);
-        text_texture_free(&textTexture);
+        TextureXAspectRation_free(&textTexture);
     }
 
 #undef TEXT_MARGIN_RATIO

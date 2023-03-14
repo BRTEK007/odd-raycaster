@@ -28,35 +28,35 @@ void setPolyVerts(c2Poly *poly, char blockType)
     }
 }
 
-void player_map_collision(player_t *player, map_t *map)
+void resCollPlayerXMap(Player *player, Map *map)
 {
-    circleEntityMapCollision(&player->pos, player->circle, map);
+    resCollCircleEntityXMap(&player->pos, player->circle, map);
 }
 
-void enemies_map_collision(enemy_arr_t *enemies, map_t *map)
+void resCollEnemyArrayXMap(EnemyArray *enemies, Map *map)
 {
 
     for (int i = 0; i < enemies->size; i++) // ENEMY WALL
     {
-        enemy_t *e = &enemies->enemies[i];
-        circleEntityMapCollision(&e->pos, e->circle, map);
+        Enemy *e = &enemies->enemies[i];
+        resCollCircleEntityXMap(&e->pos, e->circle, map);
     }
 }
 
-void projectiles_map_collision(projectile_arr_t *projectiles, map_t *map)
+void resCollProjectileArrayXMap(ProjectileArray *projectiles, Map *map)
 {
     for (int i = 0; i < projectiles->size; i++) // ENEMY WALL
     {
-        projectile_t *p = &(projectiles->arr[i]);
-        if (circleProjectileMapCollision(p->circle, map))
+        Projectile *p = &(projectiles->arr[i]);
+        if (isCollCircleEntityXMap(p->circle, map))
         {
-            projectile_arr_remove(projectiles, i);
+            ProjectileArray_remove(projectiles, i);
             i--;
         }
     }
 }
 
-bool circleProjectileMapCollision(c2Circle circle, map_t *map)
+bool isCollCircleEntityXMap(c2Circle circle, Map *map)
 {
     // printf("%d %d %d\n", circle.p.x, circle.p.y, circle.r);
     int minX = (int)circle.p.x - 1;
@@ -112,7 +112,7 @@ bool circleProjectileMapCollision(c2Circle circle, map_t *map)
     return false;
 }
 
-void circleEntityMapCollision(vec2f *entityPos, c2Circle entityCircle, map_t *map)
+void resCollCircleEntityXMap(Vector2f *entityPos, c2Circle entityCircle, Map *map)
 {
     int minX = (int)entityPos->x - 1;
     if (minX < 0)
@@ -161,30 +161,30 @@ void circleEntityMapCollision(vec2f *entityPos, c2Circle entityCircle, map_t *ma
 
             if (m.count > 0) // resolve collision
             {
-                vec2f vContact;
+                Vector2f vContact;
                 vContact.x = m.contact_points[0].x;
                 vContact.y = m.contact_points[0].y;
 
-                vec2f vToPlayer = vector_sub(*entityPos, vContact);
-                vToPlayer = vector_norm(vToPlayer);
-                vToPlayer = vector_mult_scalar(vToPlayer, m.depths[0]);
+                Vector2f vToPlayer = Vector2f_sub(*entityPos, vContact);
+                vToPlayer = Vector2f_norm(vToPlayer);
+                vToPlayer = Vector2f_multScalar(vToPlayer, m.depths[0]);
 
-                *entityPos = vector_add(*entityPos, vToPlayer);
+                *entityPos = Vector2f_add(*entityPos, vToPlayer);
             } // resolve collision
         }
     }
 }
 
-void player_enemy_projectiles_collision(player_t *player, projectile_arr_t *projectiles)
+void resCollPlayerXProjectileArray(Player *player, ProjectileArray *projectiles)
 {
     for (int i = 0; i < projectiles->size; i++)
     {
-        projectile_t *p = &(projectiles->arr[i]);
+        Projectile *p = &(projectiles->arr[i]);
         if (c2CircletoCircle(p->circle, player->circle))
         {
-            projectile_arr_remove(projectiles, i);
+            ProjectileArray_remove(projectiles, i);
             i--;
-            player_take_hit(player);
+            Player_takeHit(player);
             if (player->isDead)
                 return;
         }

@@ -14,50 +14,50 @@
 #include "map.h"
 #include "SDL2/SDL_ttf.h"
 
-typedef struct draw_floor_data_t
+typedef struct DrawFloorThreadData
 {
     SDL_Surface *screenSurface;
-    player_t *player;
-    SDL_Surface *walls_surface;
+    Player *player;
+    SDL_Surface *wallsSurface;
     int startY;
     int endY;
-} draw_floor_data_t;
+} DrawFloorThreadData;
 
-typedef struct draw_walls_data_t
+typedef struct DrawWallsThreadData
 {
     SDL_Surface *screenSurface;
-    player_t *player;
-    ray_t *rays;
+    Player *player;
+    Ray *rays;
     float *zBuffer;
-    SDL_Surface *walls_surface;
+    SDL_Surface *wallsSurface;
     int startX, endX;
-} draw_walls_data_t;
+} DrawWallsThreadData;
 
-typedef struct scaling_info_t
+typedef struct ScalingData
 {
     unsigned scalingFactor;
     unsigned offsetX;
     unsigned offsetY;
     unsigned rendererWidth;
     unsigned rendererHeight;
-} scaling_info_t;
+} ScalingData;
 
-typedef struct text_texture_t
+typedef struct TextureXAspectRatio
 {
     SDL_Texture *texture;
     float aspectRatio;
-} text_texture_t;
+} TextureXAspectRatio;
 
-void text_texture_free(text_texture_t *tt);
-text_texture_t create_text_texture(SDL_Renderer *renderer, TTF_Font *font, const char *text, SDL_Color color);
+void TextureXAspectRation_free(TextureXAspectRatio *tt);
+TextureXAspectRatio TextureXAspectRation_create(SDL_Renderer *renderer, TTF_Font *font, const char *text, SDL_Color color);
 
-scaling_info_t get_scaling_info(SDL_Renderer *renderer);
-void *draw_floor_threaded(void *vargp);
-void *draw_walls_threaded(void *vargp);
-void draw_text(SDL_Renderer *renderer, SDL_Texture *texture, int sx, int sy, char *text);
-void draw_map(SDL_Renderer *renderer, player_t *player, enemy_arr_t *enemies, ray_t *rays, int iRayCount, map_t *map);
-void draw_weapon(SDL_Renderer *renderer, player_t *player, SDL_Texture *gun_texture, scaling_info_t *scalingInfo);
-void draw_bar(SDL_Renderer *renderer, player_t *player, SDL_Texture *bar_texture, scaling_info_t *scalingInfo);
-void draw_paused_bar(SDL_Renderer *renderer, TTF_Font *font, scaling_info_t *scalingInfo, int selectedOption);
+ScalingData ScalingData_create(SDL_Renderer *renderer);
+void *drawFloor_threaded(void *vargp);
+void *drawWalls_threaded(void *vargp);
+void drawText(SDL_Renderer *renderer, SDL_Texture *texture, int sx, int sy, char *text);
+void drawMap(SDL_Renderer *renderer, Player *player, EnemyArray *enemies, Ray *rays, int iRayCount, Map *map);
+void drawWeapon(SDL_Renderer *renderer, Player *player, SDL_Texture *gun_texture, ScalingData *scalingInfo);
+void drawBar(SDL_Renderer *renderer, Player *player, SDL_Texture *bar_texture, ScalingData *scalingInfo);
+void drawPausedBar(SDL_Renderer *renderer, TTF_Font *font, ScalingData *scalingInfo, int selectedOption);
 
 #endif

@@ -79,10 +79,10 @@ int main(int argc, char *argv[])
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     bool quit = false;
-    gameState_t gameState;
-    menuState_t menuState;
-    state_t state = MENU_STATE;
-    long long last = current_timestamp();
+    GameState gameState;
+    MenuState menuState;
+    State state = MENU_STATE;
+    long long last = currentTimestamp();
     float fTimeCounter = 0.0f;
     int iFrameCounter = 0;
     int fps = 0;
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
         exit(1);
 
     // gameState_init(&gameState, renderer, font);
-    menuState_init(&menuState, renderer, font);
+    MenuState_init(&menuState, renderer, font);
     // Event loop
 
 
@@ -109,26 +109,26 @@ int main(int argc, char *argv[])
             switch (state)
             {
             case MENU_STATE:
-                menuState_event(&menuState, event);
+                MenuState_event(&menuState, event);
                 break;
             case GAME_STATE:
-                gameState_event(&gameState, event);
+                GameState_event(&gameState, event);
                 break;
             }
         }
 
-        long long now = current_timestamp();
+        long long now = currentTimestamp();
         double delta = (double)(now - last) / 1000.f;
 
         switch (state)
         {
         case MENU_STATE:
-            menuState_update(&menuState, delta);
-            menuState_draw(&menuState, renderer);
+            MenuState_update(&menuState, delta);
+            MenuState_draw(&menuState, renderer);
             break;
         case GAME_STATE:
-            gameState_update(&gameState, delta);
-            gameState_draw(&gameState, renderer);
+            GameState_update(&gameState, delta);
+            GameState_draw(&gameState, renderer);
             break;
         }
 
@@ -144,17 +144,17 @@ int main(int argc, char *argv[])
                 else if (menuState.selectedOption.value == 0) // MENU -> GAME
                 {
                     state = GAME_STATE;
-                    gameState_init(&gameState, renderer, font);
-                    menuState_free(&menuState);
+                    GameState_init(&gameState, renderer, font);
+                    MenuState_free(&menuState);
                 }
             }
             break;
         case GAME_STATE:
-            if (gameState.quit) // GAME -> MENU
+            if (gameState.isQuitRequested) // GAME -> MENU
             {
                 state = MENU_STATE;
-                gameState_free(&gameState);
-                menuState_init(&menuState, renderer, font);
+                GameState_free(&gameState);
+                MenuState_init(&menuState, renderer, font);
             }
             break;
         }
@@ -178,10 +178,10 @@ int main(int argc, char *argv[])
     switch (state)
     {
     case MENU_STATE:
-        menuState_free(&menuState);
+        MenuState_free(&menuState);
         break;
     case GAME_STATE:
-        gameState_free(&gameState);
+        GameState_free(&gameState);
         break;
     }
 

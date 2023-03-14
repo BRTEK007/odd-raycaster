@@ -11,50 +11,43 @@
 
 #include "SDL2/SDL_ttf.h"
 
-typedef struct gameState_t
+typedef struct GameState
 {
-    ray_t *rays;
-    player_t player;
-    map_t map;
-    enemy_arr_t enemies;
-    projectile_arr_t enemy_projectiles;
-    keys_t keys;
-    float fZBuffer[SCREEN_WIDTH];
+    Ray *rays;
+    Player player;
+    Map map;
+    EnemyArray enemies;
+    ProjectileArray enemyProjectiles;
+    KeysArray keys;
+    float depthBuffer[SCREEN_WIDTH];
     SDL_Surface *screenSurface;
     SDL_Surface *deathScreenSurface;
-    SDL_Texture *bar_texture;
-    SDL_Texture *frame_texture;
-    SDL_Texture *gun_texture;
-    SDL_Texture *soldier_texture;
-    SDL_Texture *walls_texture;
-    SDL_Texture *vignete_texture;
-    SDL_Surface *walls_surface;
-    SDL_Surface *soldier_surface;
-    text_texture_t youDiedText;
+    SDL_Texture *barTexture;
+    SDL_Texture *frameTexture;
+    SDL_Texture *gunTexture;
+    SDL_Texture *soldierTexture;
+    SDL_Texture *wallsTexture;
+    SDL_Texture *vigneteTexture;
+    SDL_Surface *wallsSurface;
+    SDL_Surface *soldierSurface;
+    TextureXAspectRatio youDiedText;
     uint32_t rndval;
-    bool deathAnimFinished;
-    bool quit;
+    bool isDeathAnimFinished;
+    bool isQuitRequested;
     TTF_Font *font;
-    bool paused;
-    intInRange_t selectedOptionPaused;
-} gameState_t;
+    bool isPaused;
+    IntInRange selectedOptionPaused;
+} GameState;
 
-// typedef gameStatePausedMenu_t
-// {
-//     int optionsCount;
-//     int selectedOption;
-//     const char *options[2];
-// }
-// gameStatePausedMenu_t;
 
-void gameState_init(gameState_t *gameState, SDL_Renderer *renderer, TTF_Font *font);
-void gameState_free(gameState_t *gameState);
-void gameState_event(gameState_t *gameState, SDL_Event event);
-void gameState_update(gameState_t *gameState, float delta);
-void update_enemies(enemy_arr_t *enemies, projectile_arr_t *enemy_projectiles, player_t *player, float delta);
-void player_shoot_enemies_raycast(enemy_arr_t *enemies, player_t *player, map_t *map, float maxDistance);
-void update_projectiles(projectile_arr_t *projectiles, float delta);
-void gameState_draw(gameState_t *gameState, SDL_Renderer *renderer);
-void player_attack_enemies(enemy_arr_t *enemies, player_t *player, map_t *map);
+void GameState_init(GameState *gameState, SDL_Renderer *renderer, TTF_Font *font);
+void GameState_free(GameState *gameState);
+void GameState_event(GameState *gameState, SDL_Event event);
+void GameState_update(GameState *gameState, float delta);
+void GameState_updateEnemies(EnemyArray *enemies, ProjectileArray *enemy_projectiles, Player *player, float delta);
+void GameState_playerAttackEnemiesRaycast(EnemyArray *enemies, Player *player, Map *map, float maxDistance);
+void GameState_updateProjectiles(ProjectileArray *projectiles, float delta);
+void GameState_draw(GameState *gameState, SDL_Renderer *renderer);
+void GameState_playerAttackEnemies(EnemyArray *enemies, Player *player, Map *map);
 
 #endif

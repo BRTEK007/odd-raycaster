@@ -1,20 +1,20 @@
 #include "projectile.h"
 
-void init_procetile_arr(projectile_arr_t *arr, int s)
+void ProjectileArray_init(ProjectileArray *arr, int s)
 {
     arr->size = 0;
     arr->capacity = s;
-    arr->arr = calloc(s, sizeof(projectile_t));
+    arr->arr = calloc(s, sizeof(Projectile));
     if (arr->arr == NULL)
         exit(1);
 }
 
-void free_procetile_arr(projectile_arr_t *arr)
+void ProjectileArray_free(ProjectileArray *arr)
 {
     free(arr->arr);
 }
 
-void add_procetile(projectile_arr_t *arr, projectile_t p)
+void ProjectileArray_add(ProjectileArray *arr, Projectile p)
 {
     if (arr->size == arr->capacity)
         return;
@@ -22,7 +22,7 @@ void add_procetile(projectile_arr_t *arr, projectile_t p)
     arr->size++;
 }
 
-void projectile_arr_remove(projectile_arr_t *arr, int index)
+void ProjectileArray_remove(ProjectileArray *arr, int index)
 {
     if (index < 0 || index >= arr->size)
         return;
@@ -34,9 +34,9 @@ void projectile_arr_remove(projectile_arr_t *arr, int index)
     arr->size--;
 }
 
-sprite_t projectile_get_sprite(projectile_t *e)
+Sprite Projectile_getSprite(Projectile *e)
 {
-    sprite_t s;
+    Sprite s;
     s.pos = e->pos;
     s.tx = 0;
     s.ty = 32 + 1;
