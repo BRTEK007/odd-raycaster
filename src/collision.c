@@ -1,3 +1,7 @@
+/*! 
+    \file collision.c
+    \brief collision resolution and detection
+ */
 #include "collision.h"
 
 void setPolyVerts(c2Poly *poly, char blockType)
@@ -28,6 +32,13 @@ void setPolyVerts(c2Poly *poly, char blockType)
     }
 }
 
+
+/*!
+ * \fn void resCollPlayerXMap(Player *player, Map *map)
+ * \brief Resolves collision between player and a map.
+ * \param player player
+ * \param map map
+ */
 void resCollPlayerXMap(Player *player, Map *map)
 {
     resCollCircleEntityXMap(&player->pos, player->circle, map);
