@@ -52,8 +52,8 @@ void TextureXAspectRation_free(TextureXAspectRatio *tt);
 TextureXAspectRatio TextureXAspectRation_create(SDL_Renderer *renderer, TTF_Font *font, const char *text, SDL_Color color);
 
 ScalingData ScalingData_create(SDL_Renderer *renderer);
-void *drawFloor_threaded(void *vargp);
-void *drawWalls_threaded(void *vargp);
+void *drawFloor_threaded(DrawFloorThreadData *data);
+void *drawWalls_threaded(DrawWallsThreadData *data);
 void drawText(SDL_Renderer *renderer, SDL_Texture *texture, int sx, int sy, char *text);
 void drawMap(SDL_Renderer *renderer, Player *player, EnemyArray *enemies, Ray *rays, int iRayCount, Map *map);
 void drawWeapon(SDL_Renderer *renderer, Player *player, SDL_Texture *gun_texture, ScalingData *scalingInfo);

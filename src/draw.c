@@ -1,16 +1,30 @@
+/** 
+    @file draw.c
+    @brief drawing stuff on the screen
+ */
 #include "draw.h"
 #include "drawRaycast.h"
 
-void *drawFloor_threaded(void *vargp)
+/**
+    @fn void *drawFloor_threaded(void *drawFloorThreadData)
+    @brief thread function to call floor drawing
+    @param data drawing data
+ */
+void *drawFloor_threaded(DrawFloorThreadData *data)
 {
-    DrawFloorThreadData *data = (DrawFloorThreadData *)vargp;
+    // DrawFloorThreadData *data = (DrawFloorThreadData *)drawFloorThreadData;
     drawFloorNCeiling(data->screenSurface, data->player, data->wallsSurface, data->startY, data->endY);
     return NULL;
 }
 
-void *drawWalls_threaded(void *vargp)
+/**
+    @fn void *drawWalls_threaded(DrawWallsThreadData* data)
+    @brief thread function to call walls drawing
+    @param data drawing data
+ */
+void *drawWalls_threaded(DrawWallsThreadData* data)
 {
-    DrawWallsThreadData *data = (DrawWallsThreadData *)vargp;
+    // DrawWallsThreadData *data = (DrawWallsThreadData *)vargp;
     drawWalls(data->screenSurface, data->player, data->rays, data->zBuffer, data->wallsSurface, data->startX, data->endX);
     return NULL;
 }
@@ -82,7 +96,7 @@ void drawText(SDL_Renderer *renderer, SDL_Texture *texture, int sx, int sy, char
 
 void drawMap(SDL_Renderer *renderer, Player *player, EnemyArray *enemies, Ray *rays, int iRayCount, Map *map)
 {
-    /* const int BLOCK_SIZE = 6;
+    const int BLOCK_SIZE = 6;
      const int FRAME_SIZE = 1;
      const SDL_Color WALL_COLOR = {0, 0, 255};
      const SDL_Color FRAME_COLOR = {255, 255, 0};
@@ -182,8 +196,8 @@ void drawMap(SDL_Renderer *renderer, Player *player, EnemyArray *enemies, Ray *r
 
      for (int i = 1; i <= iRayCount; i++)
      {
-         vert[i].position.x = rays[i - 1].vHit.x * BLOCK_SIZE + FRAME_SIZE;
-         vert[i].position.y = rays[i - 1].vHit.y * BLOCK_SIZE + FRAME_SIZE;
+         vert[i].position.x = rays[i - 1].hitPos.x * BLOCK_SIZE + FRAME_SIZE;
+         vert[i].position.y = rays[i - 1].hitPos.y * BLOCK_SIZE + FRAME_SIZE;
          vert[i].color.r = 255;
          vert[i].color.g = 0;
          vert[i].color.b = 255;
@@ -193,7 +207,7 @@ void drawMap(SDL_Renderer *renderer, Player *player, EnemyArray *enemies, Ray *r
      SDL_RenderGeometry(renderer, NULL, vert, iRayCount + 1, indicies, (iRayCount - 1) * 3);
 
      SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-     vec2f A = vector_add(player->pos, player->dir);
+     Vector2f A = Vector2f_add(player->pos, player->dir);
      SDL_RenderDrawLine(renderer,
                         player->pos.x * BLOCK_SIZE + FRAME_SIZE,
                         player->pos.y * BLOCK_SIZE + FRAME_SIZE,
@@ -201,8 +215,8 @@ void drawMap(SDL_Renderer *renderer, Player *player, EnemyArray *enemies, Ray *r
                         A.y * BLOCK_SIZE + FRAME_SIZE);
 
      SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-     vec2f B = vector_add(A, player->plane);
-     vec2f C = vector_sub(A, player->plane);
+     Vector2f B = Vector2f_add(A, player->plane);
+     Vector2f C = Vector2f_sub(A, player->plane);
      SDL_RenderDrawLine(renderer,
                         B.x * BLOCK_SIZE + FRAME_SIZE,
                         B.y * BLOCK_SIZE + FRAME_SIZE,
@@ -220,7 +234,7 @@ void drawMap(SDL_Renderer *renderer, Player *player, EnemyArray *enemies, Ray *r
 
          SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
          SDL_RenderFillRect(renderer, &squareRect);
-     }*/
+     }
 }
 
 

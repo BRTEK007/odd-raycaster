@@ -187,7 +187,7 @@ void GameState_draw(GameState *gameState, SDL_Renderer *renderer)
                 floor_thread_data[i].endY = (i + 1) * (SCREEN_HEIGHT / THREAD_COUNT);
             }
             for (int i = 0; i < THREAD_COUNT; i++)
-                pthread_create(&threads[i], NULL, drawFloor_threaded, (void *)&floor_thread_data[i]);
+                pthread_create(&threads[i], NULL, drawFloor_threaded, &floor_thread_data[i]);
             for (int i = 0; i < THREAD_COUNT; i++)
                 pthread_join(threads[i], NULL);
 
@@ -204,7 +204,7 @@ void GameState_draw(GameState *gameState, SDL_Renderer *renderer)
             }
 
             for (int i = 0; i < THREAD_COUNT; i++)
-                pthread_create(&threads[i], NULL, drawWalls_threaded, (void *)&walls_thread_data[i]);
+                pthread_create(&threads[i], NULL, drawWalls_threaded, &walls_thread_data[i]);
             for (int i = 0; i < THREAD_COUNT; i++)
                 pthread_join(threads[i], NULL);
 #else
@@ -253,7 +253,7 @@ void GameState_draw(GameState *gameState, SDL_Renderer *renderer)
 
         SpriteArray_free(&sprites);
 
-        // draw_map(renderer, &gameState->player, &(gameState->enemies), gameState->rays, SCREEN_WIDTH, &gameState->map);
+        //drawMap(renderer, &gameState->player, &(gameState->enemies), gameState->rays, SCREEN_WIDTH, &gameState->map);
 
         drawWeapon(renderer, &gameState->player, gameState->gunTexture, &scalingInfo);
 
