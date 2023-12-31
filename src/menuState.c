@@ -4,13 +4,14 @@
 
 void MenuState_init(MenuState *menuState, SDL_Renderer *renderer, TTF_Font *font)
 {
-
+    (void)renderer;
     menuState->font = font;
     menuState->quit = false;
     menuState->selectedOption = IntInRange_create(0, 0, 2 - 1);
 }
 void MenuState_free(MenuState *menuState)
 {
+    (void)menuState;
 }
 
 void MenuState_event(MenuState *menuState, SDL_Event event)
@@ -35,6 +36,8 @@ void MenuState_event(MenuState *menuState, SDL_Event event)
 }
 void MenuState_update(MenuState *menuState, float delta)
 {
+    (void)delta;
+    (void)menuState;
 }
 
 void MenuState_draw(MenuState *menuState, SDL_Renderer *renderer)
@@ -44,7 +47,7 @@ void MenuState_draw(MenuState *menuState, SDL_Renderer *renderer)
 
     ScalingData scalingInfo = ScalingData_create(renderer);
 
-    TextureXAspectRatio titleText = TextureXAspectRation_create(renderer, menuState->font, "RAYCASTER", (SDL_Color){191, 255, 225});
+    TextureXAspectRatio titleText = TextureXAspectRation_create(renderer, menuState->font, "RAYCASTER", (SDL_Color){191, 255, 225, 0});
 
     int textHeight = scalingInfo.rendererHeight / 8;
     int textWidth = textHeight * titleText.aspectRatio;
@@ -63,14 +66,14 @@ void MenuState_draw(MenuState *menuState, SDL_Renderer *renderer)
 #define OPTIONS_COUNT 2
 #define TEXT_MARGIN_RATIO 1.5
 
-    const static char *options[OPTIONS_COUNT] = {"PLAY", "EXIT"};
-    const static char *optionsSelected[OPTIONS_COUNT] = {">PLAY<", ">EXIT<"};
+    static const char *options[OPTIONS_COUNT] = {"PLAY", "EXIT"};
+    static const char *optionsSelected[OPTIONS_COUNT] = {">PLAY<", ">EXIT<"};
 
     for (int i = 0; i < OPTIONS_COUNT; i++)
     {
         const char *text = i == menuState->selectedOption.value ? optionsSelected[i] : options[i];
 
-        TextureXAspectRatio textTexture = TextureXAspectRation_create(renderer, menuState->font, text, (SDL_Color){128, 128, 128});
+        TextureXAspectRatio textTexture = TextureXAspectRation_create(renderer, menuState->font, text, (SDL_Color){128, 128, 128, 0});
 
         textHeight = scalingInfo.rendererHeight / 18;
         textWidth = textHeight * textTexture.aspectRatio;

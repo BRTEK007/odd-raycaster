@@ -1,4 +1,4 @@
-/** 
+/**
     @file draw.c
     @brief drawing stuff on the screen
  */
@@ -22,7 +22,7 @@ void *drawFloor_threaded(DrawFloorThreadData *data)
     @brief thread function to call walls drawing
     @param data drawing data
  */
-void *drawWalls_threaded(DrawWallsThreadData* data)
+void *drawWalls_threaded(DrawWallsThreadData *data)
 {
     // DrawWallsThreadData *data = (DrawWallsThreadData *)vargp;
     drawWalls(data->screenSurface, data->player, data->rays, data->zBuffer, data->wallsSurface, data->startX, data->endX);
@@ -93,150 +93,148 @@ void drawText(SDL_Renderer *renderer, SDL_Texture *texture, int sx, int sy, char
     }
 }
 
-
 void drawMap(SDL_Renderer *renderer, Player *player, EnemyArray *enemies, Ray *rays, int iRayCount, Map *map)
 {
     const int BLOCK_SIZE = 6;
-     const int FRAME_SIZE = 1;
-     const SDL_Color WALL_COLOR = {0, 0, 255};
-     const SDL_Color FRAME_COLOR = {255, 255, 0};
+    const int FRAME_SIZE = 1;
+    const SDL_Color WALL_COLOR = {0, 0, 255, 0};
+    const SDL_Color FRAME_COLOR = {255, 255, 0, 0};
 
-     SDL_Rect squareRect;
-     squareRect.x = 0;
-     squareRect.y = 0;
-     squareRect.w = map->width * BLOCK_SIZE + FRAME_SIZE * 2;
-     squareRect.h = map->height * BLOCK_SIZE + FRAME_SIZE * 2;
+    SDL_Rect squareRect;
+    squareRect.x = 0;
+    squareRect.y = 0;
+    squareRect.w = map->width * BLOCK_SIZE + FRAME_SIZE * 2;
+    squareRect.h = map->height * BLOCK_SIZE + FRAME_SIZE * 2;
 
-     SDL_SetRenderDrawColor(renderer, FRAME_COLOR.r, FRAME_COLOR.g, FRAME_COLOR.b, 255);
-     SDL_RenderFillRect(renderer, &squareRect);
+    SDL_SetRenderDrawColor(renderer, FRAME_COLOR.r, FRAME_COLOR.g, FRAME_COLOR.b, 255);
+    SDL_RenderFillRect(renderer, &squareRect);
 
-     squareRect.x = FRAME_SIZE;
-     squareRect.y = FRAME_SIZE;
-     squareRect.w = map->width * BLOCK_SIZE;
-     squareRect.h = map->height * BLOCK_SIZE;
+    squareRect.x = FRAME_SIZE;
+    squareRect.y = FRAME_SIZE;
+    squareRect.w = map->width * BLOCK_SIZE;
+    squareRect.h = map->height * BLOCK_SIZE;
 
-     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-     SDL_RenderFillRect(renderer, &squareRect);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderFillRect(renderer, &squareRect);
 
-     squareRect.w = BLOCK_SIZE;
-     squareRect.h = BLOCK_SIZE;
+    squareRect.w = BLOCK_SIZE;
+    squareRect.h = BLOCK_SIZE;
 
-     SDL_SetRenderDrawColor(renderer, WALL_COLOR.r, WALL_COLOR.g, WALL_COLOR.b, 255);
+    SDL_SetRenderDrawColor(renderer, WALL_COLOR.r, WALL_COLOR.g, WALL_COLOR.b, 255);
 
-     for (int x = 0; x < map->width; x++)
-     {
-         for (int y = 0; y < map->height; y++)
-         {
-             if (map->arr[y][x].blockType == '#')
-                 continue;
-             if (map->arr[y][x].blockType == 'E')
-             {
-                 squareRect.x = FRAME_SIZE + x * BLOCK_SIZE;
-                 squareRect.y = FRAME_SIZE + y * BLOCK_SIZE;
-                 SDL_RenderFillRect(renderer, &squareRect);
-             }
-             else
-             {
-                 SDL_Vertex verts[3];
-                 if (map->arr[y][x].blockType == 'A')
-                 {
-                     verts[0].position = (SDL_FPoint){x, y + 1};
-                     verts[1].position = (SDL_FPoint){x + 1, y};
-                     verts[2].position = (SDL_FPoint){x + 1, y + 1};
-                 }
-                 else if (map->arr[y][x].blockType == 'B')
-                 {
-                     verts[0].position = (SDL_FPoint){x, y};
-                     verts[1].position = (SDL_FPoint){x + 1, y + 1};
-                     verts[2].position = (SDL_FPoint){x, y + 1};
-                 }
-                 else if (map->arr[y][x].blockType == 'C')
-                 {
-                     verts[0].position = (SDL_FPoint){x, y};
-                     verts[1].position = (SDL_FPoint){x + 1, y};
-                     verts[2].position = (SDL_FPoint){x + 1, y + 1};
-                 }
-                 else if (map->arr[y][x].blockType == 'D')
-                 {
-                     verts[0].position = (SDL_FPoint){x, y};
-                     verts[1].position = (SDL_FPoint){x + 1, y};
-                     verts[2].position = (SDL_FPoint){x, y + 1};
-                 }
-                 verts[0].color = (SDL_Color){0, 0, 255, 255};
-                 verts[1].color = (SDL_Color){0, 0, 255, 255};
-                 verts[2].color = (SDL_Color){0, 0, 255, 255};
-                 verts[0].position.x = verts[0].position.x * BLOCK_SIZE + FRAME_SIZE;
-                 verts[0].position.y = verts[0].position.y * BLOCK_SIZE + FRAME_SIZE;
-                 verts[1].position.x = verts[1].position.x * BLOCK_SIZE + FRAME_SIZE;
-                 verts[1].position.y = verts[1].position.y * BLOCK_SIZE + FRAME_SIZE;
-                 verts[2].position.x = verts[2].position.x * BLOCK_SIZE + FRAME_SIZE;
-                 verts[2].position.y = verts[2].position.y * BLOCK_SIZE + FRAME_SIZE;
-                 SDL_RenderGeometry(renderer, NULL, verts, 3, NULL, 0);
-             }
-         }
-     }
+    for (int x = 0; x < map->width; x++)
+    {
+        for (int y = 0; y < map->height; y++)
+        {
+            if (map->arr[y][x].blockType == '#')
+                continue;
+            if (map->arr[y][x].blockType == 'E')
+            {
+                squareRect.x = FRAME_SIZE + x * BLOCK_SIZE;
+                squareRect.y = FRAME_SIZE + y * BLOCK_SIZE;
+                SDL_RenderFillRect(renderer, &squareRect);
+            }
+            else
+            {
+                SDL_Vertex verts[3];
+                if (map->arr[y][x].blockType == 'A')
+                {
+                    verts[0].position = (SDL_FPoint){x, y + 1};
+                    verts[1].position = (SDL_FPoint){x + 1, y};
+                    verts[2].position = (SDL_FPoint){x + 1, y + 1};
+                }
+                else if (map->arr[y][x].blockType == 'B')
+                {
+                    verts[0].position = (SDL_FPoint){x, y};
+                    verts[1].position = (SDL_FPoint){x + 1, y + 1};
+                    verts[2].position = (SDL_FPoint){x, y + 1};
+                }
+                else if (map->arr[y][x].blockType == 'C')
+                {
+                    verts[0].position = (SDL_FPoint){x, y};
+                    verts[1].position = (SDL_FPoint){x + 1, y};
+                    verts[2].position = (SDL_FPoint){x + 1, y + 1};
+                }
+                else if (map->arr[y][x].blockType == 'D')
+                {
+                    verts[0].position = (SDL_FPoint){x, y};
+                    verts[1].position = (SDL_FPoint){x + 1, y};
+                    verts[2].position = (SDL_FPoint){x, y + 1};
+                }
+                verts[0].color = (SDL_Color){0, 0, 255, 255};
+                verts[1].color = (SDL_Color){0, 0, 255, 255};
+                verts[2].color = (SDL_Color){0, 0, 255, 255};
+                verts[0].position.x = verts[0].position.x * BLOCK_SIZE + FRAME_SIZE;
+                verts[0].position.y = verts[0].position.y * BLOCK_SIZE + FRAME_SIZE;
+                verts[1].position.x = verts[1].position.x * BLOCK_SIZE + FRAME_SIZE;
+                verts[1].position.y = verts[1].position.y * BLOCK_SIZE + FRAME_SIZE;
+                verts[2].position.x = verts[2].position.x * BLOCK_SIZE + FRAME_SIZE;
+                verts[2].position.y = verts[2].position.y * BLOCK_SIZE + FRAME_SIZE;
+                SDL_RenderGeometry(renderer, NULL, verts, 3, NULL, 0);
+            }
+        }
+    }
 
-     SDL_Vertex vert[iRayCount + 1];
-     int indicies[(iRayCount - 1) * 3];
-     unsigned iIndiciesIndex = 0;
+    SDL_Vertex vert[iRayCount + 1];
+    int indicies[(iRayCount - 1) * 3];
+    unsigned iIndiciesIndex = 0;
 
-     vert[0].position.x = player->pos.x * BLOCK_SIZE + FRAME_SIZE;
-     vert[0].position.y = player->pos.y * BLOCK_SIZE + FRAME_SIZE;
-     vert[0].color.r = 255;
-     vert[0].color.g = 0;
-     vert[0].color.b = 255;
-     vert[0].color.a = 255;
+    vert[0].position.x = player->pos.x * BLOCK_SIZE + FRAME_SIZE;
+    vert[0].position.y = player->pos.y * BLOCK_SIZE + FRAME_SIZE;
+    vert[0].color.r = 255;
+    vert[0].color.g = 0;
+    vert[0].color.b = 255;
+    vert[0].color.a = 255;
 
-     for (int i = 1; i < iRayCount; i++)
-     {
-         indicies[iIndiciesIndex++] = 0;
-         indicies[iIndiciesIndex++] = i;
-         indicies[iIndiciesIndex++] = i + 1;
-     }
+    for (int i = 1; i < iRayCount; i++)
+    {
+        indicies[iIndiciesIndex++] = 0;
+        indicies[iIndiciesIndex++] = i;
+        indicies[iIndiciesIndex++] = i + 1;
+    }
 
-     for (int i = 1; i <= iRayCount; i++)
-     {
-         vert[i].position.x = rays[i - 1].hitPos.x * BLOCK_SIZE + FRAME_SIZE;
-         vert[i].position.y = rays[i - 1].hitPos.y * BLOCK_SIZE + FRAME_SIZE;
-         vert[i].color.r = 255;
-         vert[i].color.g = 0;
-         vert[i].color.b = 255;
-         vert[i].color.a = 255;
-     }
+    for (int i = 1; i <= iRayCount; i++)
+    {
+        vert[i].position.x = rays[i - 1].hitPos.x * BLOCK_SIZE + FRAME_SIZE;
+        vert[i].position.y = rays[i - 1].hitPos.y * BLOCK_SIZE + FRAME_SIZE;
+        vert[i].color.r = 255;
+        vert[i].color.g = 0;
+        vert[i].color.b = 255;
+        vert[i].color.a = 255;
+    }
 
-     SDL_RenderGeometry(renderer, NULL, vert, iRayCount + 1, indicies, (iRayCount - 1) * 3);
+    SDL_RenderGeometry(renderer, NULL, vert, iRayCount + 1, indicies, (iRayCount - 1) * 3);
 
-     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-     Vector2f A = Vector2f_add(player->pos, player->dir);
-     SDL_RenderDrawLine(renderer,
-                        player->pos.x * BLOCK_SIZE + FRAME_SIZE,
-                        player->pos.y * BLOCK_SIZE + FRAME_SIZE,
-                        A.x * BLOCK_SIZE + FRAME_SIZE,
-                        A.y * BLOCK_SIZE + FRAME_SIZE);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    Vector2f A = Vector2f_add(player->pos, player->dir);
+    SDL_RenderDrawLine(renderer,
+                       player->pos.x * BLOCK_SIZE + FRAME_SIZE,
+                       player->pos.y * BLOCK_SIZE + FRAME_SIZE,
+                       A.x * BLOCK_SIZE + FRAME_SIZE,
+                       A.y * BLOCK_SIZE + FRAME_SIZE);
 
-     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-     Vector2f B = Vector2f_add(A, player->plane);
-     Vector2f C = Vector2f_sub(A, player->plane);
-     SDL_RenderDrawLine(renderer,
-                        B.x * BLOCK_SIZE + FRAME_SIZE,
-                        B.y * BLOCK_SIZE + FRAME_SIZE,
-                        C.x * BLOCK_SIZE + FRAME_SIZE,
-                        C.y * BLOCK_SIZE + FRAME_SIZE);
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    Vector2f B = Vector2f_add(A, player->plane);
+    Vector2f C = Vector2f_sub(A, player->plane);
+    SDL_RenderDrawLine(renderer,
+                       B.x * BLOCK_SIZE + FRAME_SIZE,
+                       B.y * BLOCK_SIZE + FRAME_SIZE,
+                       C.x * BLOCK_SIZE + FRAME_SIZE,
+                       C.y * BLOCK_SIZE + FRAME_SIZE);
 
-     // draw entities
-     for (int i = 0; i < enemies->size; i++)
-     {
-         squareRect.x = enemies->enemies[i].pos.x * BLOCK_SIZE;
-         squareRect.y = enemies->enemies[i].pos.y * BLOCK_SIZE;
-         squareRect.w = BLOCK_SIZE / 2;
-         squareRect.h = BLOCK_SIZE / 2;
-         // printf("%f %f\n", enemies->enemies[i].pos.x, enemies->enemies[i].pos.y);
+    // draw entities
+    for (int i = 0; i < enemies->size; i++)
+    {
+        squareRect.x = enemies->enemies[i].pos.x * BLOCK_SIZE;
+        squareRect.y = enemies->enemies[i].pos.y * BLOCK_SIZE;
+        squareRect.w = BLOCK_SIZE / 2;
+        squareRect.h = BLOCK_SIZE / 2;
+        // printf("%f %f\n", enemies->enemies[i].pos.x, enemies->enemies[i].pos.y);
 
-         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-         SDL_RenderFillRect(renderer, &squareRect);
-     }
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        SDL_RenderFillRect(renderer, &squareRect);
+    }
 }
-
 
 void drawWeapon(SDL_Renderer *renderer, Player *player, SDL_Texture *gun_texture, ScalingData *scalingInfo)
 {
@@ -285,7 +283,7 @@ void drawPausedBar(SDL_Renderer *renderer, TTF_Font *font, ScalingData *scalingI
     SDL_SetRenderDrawColor(renderer, 0, 25, 64, 255);
     SDL_RenderFillRect(renderer, &rect);
     // draw bottom text
-    TextureXAspectRatio textPaused = TextureXAspectRation_create(renderer, font, "--PAUSED--", (SDL_Color){255, 225, 191});
+    TextureXAspectRatio textPaused = TextureXAspectRation_create(renderer, font, "--PAUSED--", (SDL_Color){255, 225, 191, 0});
     rect.w = textPaused.aspectRatio * rect.h;
     rect.x = scalingInfo->offsetX + BAR_SCREEN_OFFSET_X * scalingInfo->scalingFactor + BAR_SCREEN_WIDTH * scalingInfo->scalingFactor / 2 - rect.w / 2;
     SDL_RenderCopy(renderer, textPaused.texture, NULL, &rect);
@@ -301,8 +299,8 @@ void drawPausedBar(SDL_Renderer *renderer, TTF_Font *font, ScalingData *scalingI
 // draw top text
 #define OPTIONS_COUNT 2
 #define TEXT_MARGIN_RATIO 2
-    const static char *options[OPTIONS_COUNT] = {"RESUME", "MENU"};
-    const static char *optionsSelected[OPTIONS_COUNT] = {">RESUME<", ">MENU<"};
+    static const char *options[OPTIONS_COUNT] = {"RESUME", "MENU"};
+    static const char *optionsSelected[OPTIONS_COUNT] = {">RESUME<", ">MENU<"};
 
     const int textHeight = SCREEN_HEIGHT / 4;
 
@@ -310,7 +308,7 @@ void drawPausedBar(SDL_Renderer *renderer, TTF_Font *font, ScalingData *scalingI
     {
         const char *text = i == selectedOption ? optionsSelected[i] : options[i];
 
-        TextureXAspectRatio textTexture = TextureXAspectRation_create(renderer, font, text, (SDL_Color){255, 225, 191});
+        TextureXAspectRatio textTexture = TextureXAspectRation_create(renderer, font, text, (SDL_Color){255, 225, 191, 0});
 
         int textWidth = textHeight * textTexture.aspectRatio;
 

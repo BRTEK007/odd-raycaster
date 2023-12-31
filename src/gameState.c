@@ -37,7 +37,7 @@ void GameState_init(GameState *gameState, SDL_Renderer *renderer, TTF_Font *font
     gameState->wallsSurface = SDL_LoadBMP("../assets/walls.bmp");
     gameState->soldierSurface = SDL_LoadBMP("../assets/soldier.bmp");
 
-    gameState->youDiedText = TextureXAspectRation_create(renderer, font, "YOU DIED", (SDL_Color){237, 0, 3});
+    gameState->youDiedText = TextureXAspectRation_create(renderer, font, "YOU DIED", (SDL_Color){237, 0, 3, 0});
     gameState->font = font;
 
     ///////
@@ -187,7 +187,7 @@ void GameState_draw(GameState *gameState, SDL_Renderer *renderer)
                 floor_thread_data[i].endY = (i + 1) * (SCREEN_HEIGHT / THREAD_COUNT);
             }
             for (int i = 0; i < THREAD_COUNT; i++)
-                pthread_create(&threads[i], NULL, drawFloor_threaded, &floor_thread_data[i]);
+                pthread_create(&threads[i], NULL, (void *(*)(void *))drawFloor_threaded, &floor_thread_data[i]);
             for (int i = 0; i < THREAD_COUNT; i++)
                 pthread_join(threads[i], NULL);
 
@@ -204,7 +204,7 @@ void GameState_draw(GameState *gameState, SDL_Renderer *renderer)
             }
 
             for (int i = 0; i < THREAD_COUNT; i++)
-                pthread_create(&threads[i], NULL, drawWalls_threaded, &walls_thread_data[i]);
+                pthread_create(&threads[i], NULL, (void *(*)(void *))drawWalls_threaded, &walls_thread_data[i]);
             for (int i = 0; i < THREAD_COUNT; i++)
                 pthread_join(threads[i], NULL);
 #else
@@ -253,14 +253,14 @@ void GameState_draw(GameState *gameState, SDL_Renderer *renderer)
 
         SpriteArray_free(&sprites);
 
-        //drawMap(renderer, &gameState->player, &(gameState->enemies), gameState->rays, SCREEN_WIDTH, &gameState->map);
+        // drawMap(renderer, &gameState->player, &(gameState->enemies), gameState->rays, SCREEN_WIDTH, &gameState->map);
 
         drawWeapon(renderer, &gameState->player, gameState->gunTexture, &scalingInfo);
 
         if (gameState->player.hitAnimOpacity >= 0) // player hit anim
         {
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 200 * gameState->player.hitAnimOpacity); // hit anim
-            SDL_RenderFillRect(renderer, &DestR);                                               // hit anim
+            SDL_RenderFillRect(renderer, &DestR);                                              // hit anim
         }
     }
 
@@ -305,18 +305,18 @@ void GameState_draw(GameState *gameState, SDL_Renderer *renderer)
     DestR.y = 0;
     DestR.w = scalingInfo.rendererWidth;
     DestR.h = scalingInfo.offsetY + 1;
-    
+
     SDL_SetRenderDrawColor(renderer, 64, 0, 25, 255);
 
-    SDL_RenderFillRect(renderer, &DestR);//top
+    SDL_RenderFillRect(renderer, &DestR); // top
     DestR.y = scalingInfo.offsetY + (FRAME_HEIGHT * scalingInfo.scalingFactor);
-    
-    SDL_RenderFillRect(renderer, &DestR);//bottom
+
+    SDL_RenderFillRect(renderer, &DestR); // bottom
 
     DestR.w = scalingInfo.offsetX;
     DestR.y = scalingInfo.offsetY;
     DestR.h = FRAME_HEIGHT * scalingInfo.scalingFactor;
-    SDL_RenderFillRect(renderer, &DestR);//left
+    SDL_RenderFillRect(renderer, &DestR); // left
 }
 
 void GameState_update(GameState *gameState, float delta)
@@ -351,7 +351,7 @@ void GameState_update(GameState *gameState, float delta)
     {
         if (!gameState->isDeathAnimFinished)
         {
-            fizzlefade(gameState, delta); 
+            fizzlefade(gameState, delta);
         }
         else
         { // death anim finished
