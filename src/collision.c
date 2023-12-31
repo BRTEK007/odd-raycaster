@@ -1,16 +1,5 @@
-/** 
-    @file collision.c
-    @brief collision resolution and detection
- */
 #include "collision.h"
 
-
-/**
- * @fn void setPolyVerts(c2Poly *poly, char blockType)
- * @brief Resolves collision between player and a map.
- * @param poly polygon which verts will be set
- * @param blockType type of block
- */
 void setPolyVerts(c2Poly *poly, char blockType)
 {
     if (blockType == 'A')
@@ -39,24 +28,11 @@ void setPolyVerts(c2Poly *poly, char blockType)
     }
 }
 
-
-/**
- * @fn void resCollPlayerXMap(Player *player, Map *map)
- * @brief Resolves collision between player and a map.
- * @param player player
- * @param map map
- */
 void resCollPlayerXMap(Player *player, Map *map)
 {
     resCollCircleEntityXMap(&player->pos, player->circle, map);
 }
 
-/**
- * @fn void resCollEnemyArrayXMap(EnemyArray *enemies, Map *map)
- * @brief Resolves collision between enemies and a map.
- * @param enemies array of enemies
- * @param map map
- */
 void resCollEnemyArrayXMap(EnemyArray *enemies, Map *map)
 {
 
@@ -67,12 +43,6 @@ void resCollEnemyArrayXMap(EnemyArray *enemies, Map *map)
     }
 }
 
-/**
- * @fn void resCollProjectileArrayXMap(ProjectileArray *projectiles, Map *map)
- * @brief Resolves collision between projectiles and a map. (projectiles get removed)
- * @param projectiles array of projectiles
- * @param map map
- */
 void resCollProjectileArrayXMap(ProjectileArray *projectiles, Map *map)
 {
     for (int i = 0; i < projectiles->size; i++) // ENEMY WALL
@@ -86,16 +56,8 @@ void resCollProjectileArrayXMap(ProjectileArray *projectiles, Map *map)
     }
 }
 
-/**
- * @fn bool isCollCircleEntityXMap(c2Circle circle, Map *map)
- * @brief Checks for collision between circle entity and a map.
- * @param circle circle collider of an entity
- * @param map map
- * @return true if collision found, false otherwise
- */
 bool isCollCircleEntityXMap(c2Circle circle, Map *map)
 {
-    // printf("%d %d %d\n", circle.p.x, circle.p.y, circle.r);
     int minX = (int)circle.p.x - 1;
     if (minX < 0)
         minX = 0;
@@ -149,13 +111,6 @@ bool isCollCircleEntityXMap(c2Circle circle, Map *map)
     return false;
 }
 
-/**
- * @fn void resCollCircleEntityXMap(Vector2f *entityPos, c2Circle entityCircle, Map *map)
- * @brief Resolves collision between circle entity and a map.
- * @param entityPos pointer to entity position, might be changed
- * @param entityCircle entity collider
- * @param map map
- */
 void resCollCircleEntityXMap(Vector2f *entityPos, c2Circle entityCircle, Map *map)
 {
     int minX = (int)entityPos->x - 1;
@@ -219,12 +174,6 @@ void resCollCircleEntityXMap(Vector2f *entityPos, c2Circle entityCircle, Map *ma
     }
 }
 
-/**
- * @fn void resCollPlayerXProjectileArray(Player *player, ProjectileArray *projectiles)
- * @brief Resolves collision between projectiles and a player.
- * @param player player
- * @param projectiles projectiles
- */
 void resCollPlayerXProjectileArray(Player *player, ProjectileArray *projectiles)
 {
     for (int i = 0; i < projectiles->size; i++)

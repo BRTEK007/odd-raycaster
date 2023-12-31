@@ -114,7 +114,7 @@ void drawWalls(SDL_Surface *screenSurface, Player *player, Ray *rays, float *fZB
             if (rays[x].blockSide == HORIZONTAL && rays[x].dir.x > 0)
                 tx = texture_width - tx - 1; // texture width
             if (rays[x].blockSide == VERTICAL && rays[x].dir.y < 0)
-                tx = texture_width - tx - 1;                // texture width
+                tx = texture_width - tx - 1;               // texture width
             tx += (texture_width + 1) * rays[x].textureId; // offset to different texture
 
             if (iStartY < 0)
@@ -147,7 +147,6 @@ void drawWalls(SDL_Surface *screenSurface, Player *player, Ray *rays, float *fZB
     }
 }
 
-
 void drawSprites(SDL_Renderer *renderer, Player *player, SpriteArray *sprites, float *fZBuffer, SDL_Texture *soldier_texture, ScalingData *scalingInfo)
 {
     qsort(sprites->arr, sprites->size, sizeof(Sprite), Sprite_compareDistance);
@@ -155,12 +154,8 @@ void drawSprites(SDL_Renderer *renderer, Player *player, SpriteArray *sprites, f
     SDL_Rect SrcR;
     SDL_Rect DestR;
 
-    // const Uint32 transparentPixel = SDL_MapRGBA(soldier_surface->format, 255, 255, 255, 0);
-    // printf("%u %u \n", transparentPixel, get_pixel_fast(soldier_surface, 0,0));
-
     for (int i = 0; i < sprites->size; i++)
     {
-        // enemy_t *zombie = &enemies->enemies[i];
         Sprite *zombie = &(sprites->arr[i]);
         float spriteX = zombie->pos.x - player->pos.x;
         float spriteY = zombie->pos.y - player->pos.y;
@@ -248,7 +243,6 @@ void drawSprites(SDL_Renderer *renderer, Player *player, SpriteArray *sprites, f
         SDL_RenderCopy(renderer, soldier_texture, &SrcR, &DestR);
     }
 }
-
 
 int Sprite_compareDistance(const void *a, const void *b)
 {

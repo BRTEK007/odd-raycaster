@@ -1,30 +1,14 @@
-/**
-    @file draw.c
-    @brief drawing stuff on the screen
- */
 #include "draw.h"
 #include "drawRaycast.h"
 
-/**
-    @fn void *drawFloor_threaded(void *drawFloorThreadData)
-    @brief thread function to call floor drawing
-    @param data drawing data
- */
 void *drawFloor_threaded(DrawFloorThreadData *data)
 {
-    // DrawFloorThreadData *data = (DrawFloorThreadData *)drawFloorThreadData;
     drawFloorNCeiling(data->screenSurface, data->player, data->wallsSurface, data->startY, data->endY);
     return NULL;
 }
 
-/**
-    @fn void *drawWalls_threaded(DrawWallsThreadData* data)
-    @brief thread function to call walls drawing
-    @param data drawing data
- */
 void *drawWalls_threaded(DrawWallsThreadData *data)
 {
-    // DrawWallsThreadData *data = (DrawWallsThreadData *)vargp;
     drawWalls(data->screenSurface, data->player, data->rays, data->zBuffer, data->wallsSurface, data->startX, data->endX);
     return NULL;
 }
@@ -229,7 +213,6 @@ void drawMap(SDL_Renderer *renderer, Player *player, EnemyArray *enemies, Ray *r
         squareRect.y = enemies->enemies[i].pos.y * BLOCK_SIZE;
         squareRect.w = BLOCK_SIZE / 2;
         squareRect.h = BLOCK_SIZE / 2;
-        // printf("%f %f\n", enemies->enemies[i].pos.x, enemies->enemies[i].pos.y);
 
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
         SDL_RenderFillRect(renderer, &squareRect);

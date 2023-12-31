@@ -32,10 +32,6 @@ https://github.com/RandyGaul/cute_headers/blob/master/cute_c2.h
 SDL2  
 SDL2-ttf
 
-#### documentation
-to generate documentation run:
-```doxygen Doxyfile```
-
 #### naming conventions
 |subject|convention|example|
 |--|--|--|
